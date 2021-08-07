@@ -1,0 +1,15 @@
+[submodule "thirdparty/binance-cxx-api"]
+	path = thirdparty/binance-cxx-api
+	url = https://github.com/mussonero/binance-cxx-api
+[submodule "thirdparty/binance-cxx-api/ThirdParty/jsoncpp"]
+	path = thirdparty/binance-cxx-api/ThirdParty/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp.git
+[submodule "thirdparty/binance-cxx-api/ThirdParty/mbedtls"]
+	path = thirdparty/binance-cxx-api/ThirdParty/mbedtls
+	url = https://github.com/ARMmbed/mbedtls.git
+[submodule "thirdparty/binance-cxx-api/ThirdParty/libwebsockets"]
+	path = thirdparty/binance-cxx-api/ThirdParty/libwebsockets
+	url = https://github.com/dmikushin/libwebsockets.git
+[submodule "thirdparty/binance-cxx-api/ThirdParty/curl"]
+	path = thirdparty/binance-cxx-api/ThirdParty/curl
+	url = https://github.com/curl/curl.git
