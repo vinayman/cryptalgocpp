@@ -24,7 +24,7 @@ model::KLine::KLine(const Json::Value& value_it) :
     closeTime = atof(value_it[6].asString().c_str());
 }
 
-model::KLine::KLine(const Json::Value &jsonValue, const bool& wsData)  :
+model::KLine::KLine(const Json::Value& jsonValue, const bool& wsData)  :
     openTime(std::time_t(NULL)),
     openPrice(0.0),
     highPrice(0.0),

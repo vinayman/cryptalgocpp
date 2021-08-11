@@ -9,9 +9,11 @@
 #include "MarketData.h"
 
 
-int ws_klines_onData(Json::Value& json_result) {
+int ws_klines_onData(Json::Value& json_result)
+{
     LOGINFO(json_result);
-    if(json_result["e"].asString() == "kline") {
+    if (json_result["e"].asString() == "kline")
+    {
         auto kline = model::KLine(json_result, true);
         LOGINFO(kline);
     }
@@ -42,7 +44,7 @@ int main(int argc, char* argv [])
 
     LOGINFO("Hello, World!");
 
-    auto context = std::make_unique<Factory<MarketData>>(config);
+    auto factory = std::make_unique<Factory<MarketData>>(config);
 
     return 0;
 }
