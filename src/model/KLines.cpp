@@ -4,7 +4,7 @@
 
 #include "KLines.h"
 
-KLine::KLine(const Json::Value& value_it) :
+model::KLine::KLine(const Json::Value& value_it) :
     openTime(std::time_t(NULL)),
     openPrice(0.0),
     highPrice(0.0),
@@ -24,7 +24,29 @@ KLine::KLine(const Json::Value& value_it) :
     closeTime = atof(value_it[6].asString().c_str());
 }
 
-KLines::KLines(const Json::Value& json_result) :
+model::KLine::KLine(const Json::Value &jsonValue, const bool& wsData)  :
+    openTime(std::time_t(NULL)),
+    openPrice(0.0),
+    highPrice(0.0),
+    lowPrice(0.0),
+    closePrice(0.0),
+    volume(0.0),
+    closeTime(std::time_t(NULL)),
+    quoteAssetVolume(0.0),
+    numOfTrades(0)
+{
+    openTime = jsonValue["k"]["t"].asInt64();
+    closeTime = jsonValue["k"]["t"].asInt64();
+    openPrice = atof(jsonValue["k"]["o"].asString().c_str());
+    highPrice = atof(jsonValue["k"]["h"].asString().c_str());
+    lowPrice = atof(jsonValue["k"]["l"].asString().c_str());
+    closePrice = atof(jsonValue["k"]["c"].asString().c_str());
+    volume = atof(jsonValue["k"]["v"].asString().c_str());
+    numOfTrades = atof(jsonValue["k"]["n"].asString().c_str());
+    quoteAssetVolume = atof(jsonValue["k"]["n"].asString().c_str());
+}
+
+model::KLines::KLines(const Json::Value& json_result) :
     kLines()
 {
     for (const Json::Value& i : json_result)

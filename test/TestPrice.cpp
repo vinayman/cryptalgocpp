@@ -21,7 +21,7 @@ GTEST_TEST(Price, create_price)
     double price_;
     BINANCE_ERR_CHECK(market.getPrice(symbol_.c_str(), price_));
 
-    auto price = Price(symbol_, price_);
+    auto price = model::Price(symbol_, price_);
 
     LOGINFO(price);
 

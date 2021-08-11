@@ -19,7 +19,7 @@ GTEST_TEST(KLine, create_kline)
     BINANCE_ERR_CHECK(market.getKlines(result, "BTCUSDT", "1h", 0, 0, 10));
     ASSERT_NE(Json::nullValue, result.type());
 
-    auto klines = KLines(result);
+    auto klines = model::KLines(result);
 
     ASSERT_NE(klines.getKLines().empty(), true);
 

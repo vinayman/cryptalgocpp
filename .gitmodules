@@ -9,7 +9,7 @@
 	url = https://github.com/ARMmbed/mbedtls.git
 [submodule "thirdparty/binance-cxx-api/ThirdParty/libwebsockets"]
 	path = thirdparty/binance-cxx-api/ThirdParty/libwebsockets
-	url = https://github.com/dmikushin/libwebsockets.git
+	url = https://github.com/warmcat/libwebsockets.git
 [submodule "thirdparty/binance-cxx-api/ThirdParty/curl"]
 	path = thirdparty/binance-cxx-api/ThirdParty/curl
 	url = https://github.com/curl/curl.git

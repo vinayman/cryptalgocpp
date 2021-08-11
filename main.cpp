@@ -1,11 +1,22 @@
 #include <iostream>
+#include <memory>
 
 #include <boost/program_options.hpp>
 
-#include "binance.h"
 #include "Utils.h"
 #include "Config.h"
+#include "Factory.h"
+#include "MarketData.h"
 
+
+int ws_klines_onData(Json::Value& json_result) {
+    LOGINFO(json_result);
+    if(json_result["e"].asString() == "kline") {
+        auto kline = model::KLine(json_result, true);
+        LOGINFO(kline);
+    }
+    return 0;
+}
 
 int main(int argc, char* argv [])
 {
@@ -21,7 +32,7 @@ int main(int argc, char* argv [])
     if (!vm.contains("config"))
     {
         LOGDEBUG("Config file not provided");
-        return 1;
+        //return 1;
     }
 
     std::shared_ptr<Config> config = std::make_shared<Config>
@@ -30,5 +41,8 @@ int main(int argc, char* argv [])
     LOGINFO(config->get("name"));
 
     LOGINFO("Hello, World!");
+
+    auto context = std::make_unique<Factory<MarketData>>(config);
+
     return 0;
 }

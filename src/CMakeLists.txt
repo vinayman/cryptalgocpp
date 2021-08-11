@@ -11,7 +11,11 @@ include_directories(${Boost_INCLUDE_DIR})
 
 add_library(cryptalgo SHARED
         MarketDataInterface.cpp
-        Config.cpp OrderManager.h)
+        Config.cpp
+        OrderManager.h
+        MarketData.h
+        MarketData.cpp
+        Factory.h)
 
 target_link_libraries(cryptalgo
         binance-cxx-api

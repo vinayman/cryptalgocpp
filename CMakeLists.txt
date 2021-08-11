@@ -17,6 +17,7 @@ include_directories(${JSONCPP_INCLUDE})
 include_directories(${CURL_INCLUDE})
 include_directories(${BINACPP_INCLUDE})
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/includes)
 include_directories(${PROJECT_SOURCE_DIR}/src/model)
 
 set(Boost_LIBRARY_DIR /usr/lib/x86_64-linux-gnu)

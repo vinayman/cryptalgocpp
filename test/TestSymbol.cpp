@@ -8,11 +8,11 @@
 
 GTEST_TEST(Symbol, test_symbol)
 {
-    auto poeBtc = Symbol(std::string_view {"POEBTC"});
+    auto poeBtc = model::Symbol(std::string_view {"POEBTC"});
     ASSERT_TRUE(poeBtc.isCryptoPair());
     ASSERT_FALSE(poeBtc.isStablePair());
 
-    auto btcUsdt = Symbol(std::string_view {"BTCUSDT"});
+    auto btcUsdt = model::Symbol(std::string_view {"BTCUSDT"});
     ASSERT_TRUE(btcUsdt.isStablePair());
     ASSERT_FALSE(btcUsdt.isCryptoPair());
 }
