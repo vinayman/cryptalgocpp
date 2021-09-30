@@ -27,6 +27,7 @@ int MarketData::handleKlines(Json::Value& json_result)
     {
         auto kline = model::KLine(json_result, true);
         LOGINFO(kline);
+        LOGINFO(kline.toJson());
     }
     return 0;
 }

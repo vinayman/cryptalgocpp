@@ -29,6 +29,12 @@ namespace model {
         };
         [[nodiscard]] bool isCryptoPair() const { return !isStablePair(); };
         [[nodiscard]] std::string getSymbol() const { return symbol; };
+        [[nodiscard]] std::string toString() const { return symbol; };
         [[nodiscard]] std::string getWebsocketSymbol() const { return boost::algorithm::to_lower_copy(symbol); };
+
+        friend std::ostream& operator<<(std::ostream& os, const Symbol& k) {
+            os << k.getSymbol();
+            return os;
+        }
     };
 }

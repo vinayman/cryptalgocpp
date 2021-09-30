@@ -9,6 +9,7 @@
 #include <json/json.h>
 
 #include "../Utils.h"
+#include "Symbol.h"
 
 namespace model
 {
@@ -54,6 +55,7 @@ namespace model
             "B": "123456"   // Ignore
           }
          */
+        Symbol symbol;
         std::time_t openTime;
         double openPrice;
         double highPrice;
@@ -67,6 +69,7 @@ namespace model
     public:
         explicit KLine(const Json::Value& value_it);
         explicit KLine(const Json::Value& jsonValue, const bool& wsData);
+        [[nodiscard]] Symbol getSymbol() const { return symbol; };
         [[nodiscard]] std::time_t getOpenTime() const { return openTime; };
         [[nodiscard]] std::time_t getCloseTime() const { return closeTime; };
         [[nodiscard]] double getOpenPrice() const { return openPrice; };
@@ -76,10 +79,12 @@ namespace model
         [[nodiscard]] double getVolume() const { return volume; };
         [[nodiscard]] double getQuoteAssetVolume() const { return quoteAssetVolume; };
         [[nodiscard]] int getNumOfTrades() const { return numOfTrades; };
+        [[nodiscard]] Json::Value toJson();
 
         friend std::ostream& operator<<(std::ostream& os, const KLine& k)
         {
-            os << "\n\t" << LOG_VAR(k.getOpenPrice()) << '\n';
+            os << "\n\t" << LOG_VAR(k.getSymbol()) << '\n';
+            os << "\t" << LOG_VAR(k.getOpenTime()) << '\n';
             os << '\t' << LOG_VAR(k.getCloseTime()) << '\n';
             os << '\t' << LOG_VAR(k.getOpenPrice()) << '\n';
             os << '\t' << LOG_VAR(k.getHighPrice()) << '\n';
