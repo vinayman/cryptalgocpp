@@ -5,15 +5,27 @@
 #include "MarketData.h"
 
 MarketData::MarketData(const std::shared_ptr <Config>& config) :
-    _config(config)
+    _config(config),
+    _symbol(model::Symbol(std::string{"BNBUSDT"})),
+    _klineSubscriptionPeriod("1m")
 { }
 
 void MarketData::subscribe()
 {
     while (true)
     {
+        if (_config->configParamExists("symbol")) {
+            _symbol = model::Symbol(_config->get("symbol"));
+        }
+        if (_config->configParamExists("subscription_period")) {
+            _klineSubscriptionPeriod = _config->get("subscription_period");
+        }
+        std::string subscriptionString{
+            "/ws/" + _symbol.getWebsocketSymbol() + "@kline_" + _klineSubscriptionPeriod
+        };
+        LOGINFO("Subscribing to:", subscriptionString);
         binance::Websocket::init();
-        binance::Websocket::connect_endpoint(handleKlines, "/ws/bnbusdt@kline_1m");
+        binance::Websocket::connect_endpoint(handleKlines, subscriptionString.c_str());
         binance::Websocket::enter_event_loop();
         LOGINFO("error exiting enter_event_loop and we will try again after 5sec");
         sleep(5);

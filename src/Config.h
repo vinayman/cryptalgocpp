@@ -21,4 +21,5 @@ public:
     explicit Config(const std::basic_string<char>& configFile);
     const std::string& get(const std::string& key);
     template <typename Val> void set(const std::string& key, const Val& value);
+    [[nodiscard]] bool configParamExists(const std::string& key);
 };

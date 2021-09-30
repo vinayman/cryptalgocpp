@@ -49,3 +49,10 @@ void Config::set(const std::string& key, const Val& value)
 {
     _config[key] = value;
 }
+
+bool Config::configParamExists(const std::string &key) {
+    if (_config.find(key) != _config.end()) {
+        return true;
+    }
+    return false;
+}

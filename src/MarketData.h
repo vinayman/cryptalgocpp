@@ -7,6 +7,7 @@
 #include "binance_websocket.h"
 
 #include "Config.h"
+#include "model/Symbol.h"
 #include "model/KLines.h"
 
 class MarketData {
@@ -20,4 +21,6 @@ public:
 
 private:
     std::shared_ptr<Config> _config;
+    model::Symbol _symbol;
+    std::string _klineSubscriptionPeriod{};
 };
