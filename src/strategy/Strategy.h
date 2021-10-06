@@ -7,10 +7,17 @@
 
 template <typename TOrdApi>
 class Strategy {
+    Strategy();
     void evaluate();
-    bool shouldEvalute();
+    bool shouldEvaluate();
     void createAllocation();
 };
+
+
+template<typename TOrdApi>
+Strategy<TOrdApi>::Strategy() {
+
+}
 
 template<typename TOrdApi>
 void Strategy<TOrdApi>::evaluate() {
@@ -18,7 +25,7 @@ void Strategy<TOrdApi>::evaluate() {
 }
 
 template<typename TOrdApi>
-bool Strategy<TOrdApi>::shouldEvalute() {
+bool Strategy<TOrdApi>::shouldEvaluate() {
     return true;
 }
 

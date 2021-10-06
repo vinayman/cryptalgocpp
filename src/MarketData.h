@@ -14,7 +14,7 @@ class MarketData {
 public:
     explicit MarketData(const std::shared_ptr<Config> &config);
 
-    void subscribe();
+    [[noreturn]] void subscribe();
     static int handleKlines(Json::Value& json_result);
     int handlePrice(const Json::Value& json_result);
     int handleQuotes(const Json::Value& json_result);

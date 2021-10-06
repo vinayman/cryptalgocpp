@@ -8,18 +8,19 @@ MarketData::MarketData(const std::shared_ptr <Config>& config) :
     _config(config),
     _symbol(model::Symbol(std::string{"BNBUSDT"})),
     _klineSubscriptionPeriod("1m")
-{ }
+{
+    if (_config->configParamExists("symbol")) {
+        _symbol = model::Symbol(_config->get("symbol"));
+    }
+    if (_config->configParamExists("subscription_period")) {
+        _klineSubscriptionPeriod = _config->get("subscription_period");
+    }
+}
 
-void MarketData::subscribe()
+[[noreturn]] void MarketData::subscribe()
 {
     while (true)
     {
-        if (_config->configParamExists("symbol")) {
-            _symbol = model::Symbol(_config->get("symbol"));
-        }
-        if (_config->configParamExists("subscription_period")) {
-            _klineSubscriptionPeriod = _config->get("subscription_period");
-        }
         std::string subscriptionString{
             "/ws/" + _symbol.getWebsocketSymbol() + "@kline_" + _klineSubscriptionPeriod
         };

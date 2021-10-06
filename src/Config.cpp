@@ -10,7 +10,6 @@ Config::Config(const std::basic_string<char>& configFile) :
 {
     std::ifstream cfgfile(configFile, std::ifstream::binary);
     Json::Value root;
-    Json::Reader reader;
     cfgfile >> root;
     LOGINFO("Done", root);
     if (!root.empty())
