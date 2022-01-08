@@ -17,6 +17,6 @@ private:
 
 template<typename TMarketData>
 Factory<TMarketData>::Factory(const std::shared_ptr<Config> &config) {
-    _marketData = std::make_shared<TMarketData>(config);
+    auto _marketData = TMarketData::getInstance(config);
     _marketData->subscribe();
 }

@@ -3,25 +3,36 @@
 //
 
 #pragma once
+
+#include "MarketData.h"
+#include "Event.h"
 #include "../Utils.h"
 
 template <typename TOrdApi>
 class Strategy {
-    Strategy();
+public:
+    Strategy(const std::shared_ptr<MarketData> marketData_);
     void evaluate();
     bool shouldEvaluate();
     void createAllocation();
+    void onKline(const Event& event)
+private:
+    std::shared_ptr<MarketData> _marketData;
 };
 
 
 template<typename TOrdApi>
-Strategy<TOrdApi>::Strategy() {
-
-}
+Strategy<TOrdApi>::Strategy(const std::shared_ptr<MarketData> marketData_) :
+_marketData(marketData_)
+{}
 
 template<typename TOrdApi>
 void Strategy<TOrdApi>::evaluate() {
-
+    auto event = _marketData->read();
+    if (event)
+    {
+        onKline(event);
+    }
 }
 
 template<typename TOrdApi>
@@ -31,5 +42,11 @@ bool Strategy<TOrdApi>::shouldEvaluate() {
 
 template<typename TOrdApi>
 void Strategy<TOrdApi>::createAllocation() {
+
+}
+
+template <typename TOrdApi>
+void Strategy<TOrdApi>::onKline(const Event& event)
+{
 
 }

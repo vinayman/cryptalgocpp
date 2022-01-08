@@ -4,17 +4,32 @@
 
 #include "MarketData.h"
 
-MarketData::MarketData(const std::shared_ptr <Config>& config) :
-    _config(config),
-    _symbol(model::Symbol(std::string{"BNBUSDT"})),
-    _klineSubscriptionPeriod("1m")
+
+std::shared_ptr<MarketData> MarketData::getInstance(const std::shared_ptr<Config> &config)
 {
-    if (_config->configParamExists("symbol")) {
-        _symbol = model::Symbol(_config->get("symbol"));
+    if (config.get() == nullptr)
+    {
+        return _marketDataInstance;
     }
-    if (_config->configParamExists("subscription_period")) {
-        _klineSubscriptionPeriod = _config->get("subscription_period");
+    if (_marketDataInstance.get() == nullptr)
+    {        
+        static std::shared_ptr<MarketData> marketDataPtr(new MarketData());
+        marketDataPtr->init(config);
+        _marketDataInstance = marketDataPtr;
+        return _marketDataInstance;
     }
+    return _marketDataInstance;
+}
+
+void MarketData::init(const std::shared_ptr<Config> &config)
+{
+    if (config->configParamExists("symbol")) {
+        _symbol = model::Symbol(config->get("symbol"));
+    }
+    if (config->configParamExists("subscription_period")) {
+        _klineSubscriptionPeriod = config->get("subscription_period");
+    }
+    _marketDataInstance = std::shared_ptr<MarketData>(this);
 }
 
 [[noreturn]] void MarketData::subscribe()
@@ -33,13 +48,19 @@ MarketData::MarketData(const std::shared_ptr <Config>& config) :
     }
 }
 
+template<typename T>
+void MarketData::update(const std::shared_ptr<T>& data_) {
+    std::lock_guard<decltype(_mutex)> lock(_mutex);
+    _eventBuffer.push(std::make_shared<Event>(data_));
+}
+
 int MarketData::handleKlines(Json::Value& json_result)
 {
     LOGINFO(json_result);
     if (json_result["e"].asString() == "kline")
     {
         auto kline = model::KLine(json_result, true);
-        LOGINFO(kline);
+        MarketData::getInstance(nullptr)->update(std::make_shared<model::KLine>(kline));
         LOGINFO(kline.toJson());
     }
     return 0;
@@ -53,4 +74,13 @@ int MarketData::handlePrice(const Json::Value& json_result)
 int MarketData::handleQuotes(const Json::Value& json_result)
 {
     return 0;
+}
+
+std::shared_ptr<Event> MarketData::read() {
+    std::lock_guard<decltype(_mutex)> lock(_mutex);
+    auto event = _eventBuffer.empty() ? nullptr : _eventBuffer.top();
+    if (event) {
+        _eventBuffer.pop();
+    }
+    return event;
 }

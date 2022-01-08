@@ -16,7 +16,10 @@ add_library(cryptalgo SHARED
         MarketData.h
         MarketData.cpp
         Factory.h
-        strategy/Strategy.h Event.cpp Event.h OrderInterface.cpp OrderInterface.h)
+        strategy/Strategy.h
+        Event.h
+        OrderInterface.cpp
+        OrderInterface.h)
 
 target_link_libraries(cryptalgo
         binance-cxx-api

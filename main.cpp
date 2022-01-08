@@ -2,6 +2,7 @@
 #include <memory>
 
 #include <boost/program_options.hpp>
+#include <boost/exception/exception.hpp>
 
 #include "Utils.h"
 #include "Config.h"
@@ -34,7 +35,8 @@ int main(int argc, char* argv [])
     if (!vm.contains("config"))
     {
         LOGDEBUG("Config file not provided");
-        //return 1;
+        BOOST_THROW_EXCEPTION(std::out_of_range("No config file provided"));
+        return 1;
     }
 
     std::shared_ptr<Config> config = std::make_shared<Config>
