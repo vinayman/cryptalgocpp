@@ -4,9 +4,12 @@
 
 #pragma once
 
+#include <iostream>
+
 #include "MarketData.h"
 #include "Event.h"
 #include "../Utils.h"
+#include "model/KLines.h"
 
 template <typename TOrdApi>
 class Strategy {
@@ -15,7 +18,7 @@ public:
     void evaluate();
     bool shouldEvaluate();
     void createAllocation();
-    void onKline(const Event& event)
+    void onKline(const std::shared_ptr<Event>& event);
 private:
     std::shared_ptr<MarketData> _marketData;
 };
@@ -46,7 +49,9 @@ void Strategy<TOrdApi>::createAllocation() {
 }
 
 template <typename TOrdApi>
-void Strategy<TOrdApi>::onKline(const Event& event)
+void Strategy<TOrdApi>::onKline(const std::shared_ptr<Event>& event)
 {
-
+    std::shared_ptr<model::KLine> klinePtr = event->getKlinePtr();
+    model::KLine kline = *klinePtr.get();
+    LOGINFO(kline);
 }

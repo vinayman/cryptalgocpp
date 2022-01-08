@@ -47,6 +47,10 @@ int main(int argc, char* argv [])
     LOGINFO("Hello, World!");
 
     auto factory = std::make_unique<Factory<MarketData>>(config);
+    while (factory->getStrategy().shouldEvaluate())
+    {
+        factory->getStrategy().evaluate();
+    }
 
     return 0;
 }

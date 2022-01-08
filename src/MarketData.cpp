@@ -4,6 +4,8 @@
 
 #include "MarketData.h"
 
+std::mutex MarketData::_mutex;
+
 
 std::shared_ptr<MarketData> MarketData::getInstance(const std::shared_ptr<Config> &config)
 {
@@ -50,18 +52,16 @@ void MarketData::init(const std::shared_ptr<Config> &config)
 
 template<typename T>
 void MarketData::update(const std::shared_ptr<T>& data_) {
-    std::lock_guard<decltype(_mutex)> lock(_mutex);
+    std::lock_guard<std::mutex> lockGuard_(_mutex);
     _eventBuffer.push(std::make_shared<Event>(data_));
 }
 
 int MarketData::handleKlines(Json::Value& json_result)
 {
-    LOGINFO(json_result);
     if (json_result["e"].asString() == "kline")
     {
         auto kline = model::KLine(json_result, true);
         MarketData::getInstance(nullptr)->update(std::make_shared<model::KLine>(kline));
-        LOGINFO(kline.toJson());
     }
     return 0;
 }
@@ -77,7 +77,7 @@ int MarketData::handleQuotes(const Json::Value& json_result)
 }
 
 std::shared_ptr<Event> MarketData::read() {
-    std::lock_guard<decltype(_mutex)> lock(_mutex);
+    std::lock_guard<std::mutex> lockGuard_(_mutex);
     auto event = _eventBuffer.empty() ? nullptr : _eventBuffer.top();
     if (event) {
         _eventBuffer.pop();

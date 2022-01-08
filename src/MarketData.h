@@ -6,6 +6,7 @@
 
 #include <mutex>
 #include <queue>
+#include <iostream>
 
 #include "binance_websocket.h"
 
@@ -25,7 +26,7 @@ public:
 
 class MarketData {
 private:
-    std::mutex _mutex;
+    static std::mutex _mutex;
     std::shared_ptr<Config> _config;
     model::Symbol _symbol;
     std::string _klineSubscriptionPeriod{};
@@ -49,7 +50,6 @@ public:
     void init(const std::shared_ptr<Config> &config);
 
     static std::shared_ptr<MarketData> getInstance(const std::shared_ptr<Config> &config);
-    static MarketData& getInstanceReference(const std::shared_ptr<Config> &config);
 
     std::shared_ptr<Event> read();
 

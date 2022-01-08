@@ -21,6 +21,6 @@ public:
             , _eventType(EventType::KLine) {}
 
     EventType eventType() const { return _eventType; }
-    const std::shared_ptr<model::KLine>& getKline() const { return _kline; }
+    const std::shared_ptr<model::KLine>& getKlinePtr() const { return _kline; }
     std::chrono::system_clock::time_point timeStamp() { return _timeStamp; }
 };
