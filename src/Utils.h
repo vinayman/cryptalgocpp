@@ -4,9 +4,11 @@
 
 #pragma once
 #include <iostream>
+#include <iosfwd>
 #include <experimental/source_location>
 #include <chrono>
 #include <ctime>
+#include <mutex>
 
 template <typename ...Args>
 void Log(const std::experimental::source_location& location,
@@ -29,3 +31,6 @@ void Log(const std::experimental::source_location& location,
 
 #define LOG_VAR(var_) #var_ << "='" << var_ << "', "
 #define LOG_NVP(name_, var_) name_ << "=" << var_ << " "
+
+// types
+using Guard = std::lock_guard<std::mutex>;

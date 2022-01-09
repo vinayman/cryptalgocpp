@@ -52,7 +52,7 @@ void MarketData::init(const std::shared_ptr<Config> &config)
 
 template<typename T>
 void MarketData::update(const std::shared_ptr<T>& data_) {
-    std::lock_guard<std::mutex> lockGuard_(_mutex);
+    Guard lockGuard_(_mutex);
     _eventBuffer.push(std::make_shared<Event>(data_));
 }
 
@@ -77,7 +77,7 @@ int MarketData::handleQuotes(const Json::Value& json_result)
 }
 
 std::shared_ptr<Event> MarketData::read() {
-    std::lock_guard<std::mutex> lockGuard_(_mutex);
+    Guard lockGuard_(_mutex);
     auto event = _eventBuffer.empty() ? nullptr : _eventBuffer.top();
     if (event) {
         _eventBuffer.pop();

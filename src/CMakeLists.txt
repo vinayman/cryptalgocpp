@@ -16,7 +16,6 @@ add_library(cryptalgo SHARED
         MarketData.h
         MarketData.cpp
         Factory.h
-        strategy/Strategy.h
         Event.h
         OrderInterface.cpp
         OrderInterface.h)
@@ -27,6 +26,8 @@ target_link_libraries(cryptalgo
         pthread
         cryptalgomodel
         )
+
+add_subdirectory(strategy)
 
 install(TARGETS
         cryptalgo

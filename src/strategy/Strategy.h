@@ -14,19 +14,21 @@
 template <typename TOrdApi>
 class Strategy {
 public:
-    Strategy(const std::shared_ptr<MarketData> marketData_);
+    Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_);
     void evaluate();
     bool shouldEvaluate();
     void createAllocation();
-    void onKline(const std::shared_ptr<Event>& event);
+    virtual void onKline(const std::shared_ptr<Event>& event) = 0;
 private:
     std::shared_ptr<MarketData> _marketData;
+    std::shared_ptr<TOrdApi> _orderInterface;
 };
 
 
 template<typename TOrdApi>
-Strategy<TOrdApi>::Strategy(const std::shared_ptr<MarketData> marketData_) :
+Strategy<TOrdApi>::Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_) :
 _marketData(marketData_)
+, _orderInterface(orderInterface_)
 {}
 
 template<typename TOrdApi>
@@ -46,12 +48,4 @@ bool Strategy<TOrdApi>::shouldEvaluate() {
 template<typename TOrdApi>
 void Strategy<TOrdApi>::createAllocation() {
 
-}
-
-template <typename TOrdApi>
-void Strategy<TOrdApi>::onKline(const std::shared_ptr<Event>& event)
-{
-    std::shared_ptr<model::KLine> klinePtr = event->getKlinePtr();
-    model::KLine kline = *klinePtr.get();
-    LOGINFO(kline);
 }

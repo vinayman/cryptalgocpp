@@ -10,6 +10,7 @@
 
 #include "binance_websocket.h"
 
+#include "Utils.h"
 #include "Config.h"
 #include "Event.h"
 #include "model/Symbol.h"

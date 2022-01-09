@@ -8,6 +8,7 @@
 #include "Config.h"
 #include "Factory.h"
 #include "MarketData.h"
+#include "OrderInterface.h"
 
 
 int ws_klines_onData(Json::Value& json_result)
@@ -46,10 +47,12 @@ int main(int argc, char* argv [])
 
     LOGINFO("Hello, World!");
 
-    auto factory = std::make_unique<Factory<MarketData>>(config);
-    while (factory->getStrategy().shouldEvaluate())
+    auto factory = std::make_unique<Factory<MarketData, OrderInterface>>(config);
+    factory->initStrategy();
+    auto strategy = factory->getStrategy();
+    while (strategy->shouldEvaluate())
     {
-        factory->getStrategy().evaluate();
+        strategy->evaluate();
     }
 
     return 0;
