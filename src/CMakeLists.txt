@@ -15,6 +15,7 @@ add_library(cryptalgo SHARED
         OrderManager.h
         MarketData.h
         MarketData.cpp
+        KuCoinMarketData.h
         Factory.h
         Event.h
         OrderInterface.cpp

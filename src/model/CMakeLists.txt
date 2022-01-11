@@ -9,5 +9,6 @@ add_library(cryptalgomodel SHARED
         KLines.cpp
         Price.h
         Quote.h
+        Quote.cpp
         Symbol.h
         Allocation.h)

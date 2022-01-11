@@ -4,6 +4,7 @@
 
 #pragma once
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <boost/algorithm/string.hpp>

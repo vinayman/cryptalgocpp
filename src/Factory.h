@@ -16,10 +16,10 @@ template <typename TMarketData, typename TOrdApi>
 class Factory {
 private:
     void subscribeMarketData();
-    std::shared_ptr<Config> _config;
-    std::shared_ptr<TMarketData> _marketData;
-    std::shared_ptr<TOrdApi> _orderInterface;
-    std::shared_ptr<Strategy<TOrdApi>> _strategy;
+    std::shared_ptr<Config> _config = nullptr;
+    std::shared_ptr<TMarketData> _marketData = nullptr;
+    std::shared_ptr<TOrdApi> _orderInterface = nullptr;
+    std::shared_ptr<Strategy<TOrdApi>> _strategy = nullptr;
     std::thread _marketDataThread;
     typedef std::shared_ptr<Strategy<TOrdApi>> (*factoryMethod_t)(
             std::shared_ptr<TMarketData>,std::shared_ptr<TOrdApi>) ;
@@ -27,6 +27,7 @@ private:
 public:
     explicit Factory(const std::shared_ptr<Config>& config);
     const std::shared_ptr<Strategy<TOrdApi>>& getStrategy() const { return _strategy; };
+    const std::shared_ptr<TMarketData>& getMarketData() const { return _marketData; };
     ~Factory();
     factoryMethod_t loadFactoryMethod();
     void initStrategy();

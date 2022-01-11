@@ -11,6 +11,7 @@ public:
 private:
     using StrategyBase = Strategy<TOrdApi>;
     void onKline(const std::shared_ptr<Event>& event_) override;
+    void onQuote(const std::shared_ptr<Event>& event_) override;
 };
 
 template <typename TOrdApi>
@@ -24,4 +25,12 @@ void SimpleStrategy<TOrdApi>::onKline(const std::shared_ptr<Event>& event_)
     std::shared_ptr<model::KLine> klinePtr = event_->getKlinePtr();
     model::KLine kline = *klinePtr.get();
     LOGINFO(kline);
+}
+
+template <typename TOrdApi>
+void SimpleStrategy<TOrdApi>::onQuote(const std::shared_ptr<Event>& event_)
+{
+    std::shared_ptr<model::Quote> quotePtr = event_->getQuotePtr();
+    model::Quote quote = *quotePtr.get();
+    LOGINFO(quote);
 }

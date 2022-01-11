@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <iostream>
 #include <memory>
 
@@ -11,15 +12,12 @@
 #include "OrderInterface.h"
 
 
-int ws_klines_onData(Json::Value& json_result)
+static volatile sig_atomic_t sig_caught = 0;
+
+void handle_sighup(int signum)
 {
-    LOGINFO(json_result);
-    if (json_result["e"].asString() == "kline")
-    {
-        auto kline = model::KLine(json_result, true);
-        LOGINFO(kline);
-    }
-    return 0;
+    if (signum == SIGHUP)
+        sig_caught = 1;
 }
 
 int main(int argc, char* argv [])
@@ -45,13 +43,18 @@ int main(int argc, char* argv [])
 
     LOGINFO(config->get("name"));
 
-    LOGINFO("Hello, World!");
+    signal(SIGHUP, handle_sighup);
 
     auto factory = std::make_unique<Factory<MarketData, OrderInterface>>(config);
+    LOGINFO("Initializing strategy");
     factory->initStrategy();
     auto strategy = factory->getStrategy();
     while (strategy->shouldEvaluate())
     {
+        if (sig_caught) {
+            LOGINFO("Received SIGHUP signal - Exiting!");
+            return sig_caught;
+        }
         strategy->evaluate();
     }
 

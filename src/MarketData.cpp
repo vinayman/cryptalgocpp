@@ -9,8 +9,11 @@ std::mutex MarketData::_mutex;
 
 std::shared_ptr<MarketData> MarketData::getInstance(const std::shared_ptr<Config> &config)
 {
+    UniqueGuard lock_(_mutex);
     if (config.get() == nullptr)
     {
+        if (_marketDataInstance.get() == nullptr)
+            BOOST_THROW_EXCEPTION(std::out_of_range("No MD Instance"));
         return _marketDataInstance;
     }
     if (_marketDataInstance.get() == nullptr)
@@ -29,7 +32,7 @@ void MarketData::init(const std::shared_ptr<Config> &config)
         _symbol = model::Symbol(config->get("symbol"));
     }
     if (config->configParamExists("subscription_period")) {
-        _klineSubscriptionPeriod = config->get("subscription_period");
+        _mdSubscriptionPeriod = config->get("subscription_period");
     }
     _marketDataInstance = std::shared_ptr<MarketData>(this);
 }
@@ -38,12 +41,15 @@ void MarketData::init(const std::shared_ptr<Config> &config)
 {
     while (true)
     {
-        std::string subscriptionString{
-            "/ws/" + _symbol.getWebsocketSymbol() + "@kline_" + _klineSubscriptionPeriod
+        std::string kLineSubscriptionString{
+            "/ws/" + _symbol.getWebsocketSymbol() + "@kline_" + _mdSubscriptionPeriod
         };
-        LOGINFO("Subscribing to:", subscriptionString);
+        std::string quoteSubscriptionString{"/ws/" + _symbol.getWebsocketSymbol() + "@bookTicker"};
         binance::Websocket::init();
-        binance::Websocket::connect_endpoint(handleKlines, subscriptionString.c_str());
+        LOGINFO("Subscribing to:", kLineSubscriptionString);
+        binance::Websocket::connect_endpoint(handleKlines, kLineSubscriptionString.c_str());
+        LOGINFO("Subscribing to:", quoteSubscriptionString);
+        binance::Websocket::connect_endpoint(handleQuotes, quoteSubscriptionString.c_str());
         binance::Websocket::enter_event_loop();
         LOGINFO("error exiting enter_event_loop and we will try again after 5sec");
         sleep(5);
@@ -71,8 +77,10 @@ int MarketData::handlePrice(const Json::Value& json_result)
     return 0;
 }
 
-int MarketData::handleQuotes(const Json::Value& json_result)
+int MarketData::handleQuotes(Json::Value& json_result)
 {
+    auto quote = model::Quote(json_result, true);
+    MarketData::getInstance(nullptr)->update(std::make_shared<model::Quote>(quote));
     return 0;
 }
 

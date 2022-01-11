@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <unistd.h>
 #include <iostream>
 #include <iosfwd>
 #include <experimental/source_location>
@@ -20,7 +21,7 @@ void Log(const std::experimental::source_location& location,
     std::strftime(&dateTimeStr[0], dateTimeStr.size(), "%Y-%m-%d %H:%M:%S",
                   std::localtime(&now));
 
-    std::cout << dateTimeStr << " | " << level << " " << location.file_name() << "("
+    std::cout << dateTimeStr << " | " << gettid() << " | " << level << " " << location.file_name() << "("
               << location.line() << ") : ";
     ((std::cout << std::forward<Args>(args) << " "), ...);
     std::cout << '\n';
@@ -34,3 +35,4 @@ void Log(const std::experimental::source_location& location,
 
 // types
 using Guard = std::lock_guard<std::mutex>;
+using UniqueGuard = std::unique_lock<std::mutex>;

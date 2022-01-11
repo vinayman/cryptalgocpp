@@ -8,12 +8,15 @@
 #include <queue>
 #include <iostream>
 
+#include <boost/exception/exception.hpp>
+
 #include "binance_websocket.h"
 
 #include "Utils.h"
 #include "Config.h"
 #include "Event.h"
 #include "model/Symbol.h"
+#include "model/Quote.h"
 #include "model/KLines.h"
 
 using namespace binance;
@@ -28,18 +31,18 @@ public:
 class MarketData {
 private:
     static std::mutex _mutex;
-    std::shared_ptr<Config> _config;
+    std::shared_ptr<Config> _config = nullptr;
     model::Symbol _symbol;
-    std::string _klineSubscriptionPeriod{};
+    std::string _mdSubscriptionPeriod{};
     std::priority_queue<std::shared_ptr<Event>, std::vector<std::shared_ptr<Event>>, QueueArrange> _eventBuffer;
 
     MarketData() :
             _symbol(model::Symbol(std::string{"BNBUSDT"}))
-            , _klineSubscriptionPeriod("1m") {}
+            , _mdSubscriptionPeriod("1m") {}
 
     static int handleKlines(Json::Value& json_result);
     static int handlePrice(const Json::Value& json_result);
-    static int handleQuotes(const Json::Value& json_result);
+    static int handleQuotes(Json::Value& json_result);
     model::Symbol getSymbol() const { return _symbol ; };
     
     template<typename T>
