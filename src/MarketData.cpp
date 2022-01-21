@@ -10,17 +10,17 @@ std::mutex MarketData::_mutex;
 std::shared_ptr<MarketData> MarketData::getInstance(const std::shared_ptr<Config> &config)
 {
     UniqueGuard lock_(_mutex);
-    if (config.get() == nullptr)
-    {
-        if (_marketDataInstance.get() == nullptr)
-            BOOST_THROW_EXCEPTION(std::out_of_range("No MD Instance"));
-        return _marketDataInstance;
-    }
     if (_marketDataInstance.get() == nullptr)
     {        
         static std::shared_ptr<MarketData> marketDataPtr(new MarketData());
         marketDataPtr->init(config);
         _marketDataInstance = marketDataPtr;
+        return _marketDataInstance;
+    }
+    if (config.get() == nullptr)
+    {
+        if (_marketDataInstance.get() == nullptr)
+            BOOST_THROW_EXCEPTION(std::out_of_range("No MD Instance"));
         return _marketDataInstance;
     }
     return _marketDataInstance;

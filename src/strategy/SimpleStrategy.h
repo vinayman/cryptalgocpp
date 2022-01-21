@@ -31,6 +31,6 @@ template <typename TOrdApi>
 void SimpleStrategy<TOrdApi>::onQuote(const std::shared_ptr<Event>& event_)
 {
     std::shared_ptr<model::Quote> quotePtr = event_->getQuotePtr();
-    model::Quote quote = *quotePtr.get();
-    LOGINFO(quote);
+    this->setQuote(quotePtr);
+    LOGINFO(this->getQuote());
 }
