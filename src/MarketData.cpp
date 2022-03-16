@@ -37,8 +37,9 @@ void MarketData::init(const std::shared_ptr<Config> &config)
     _marketDataInstance = std::shared_ptr<MarketData>(this);
 }
 
-[[noreturn]] void MarketData::subscribe()
+void MarketData::subscribe()
 {
+    signal(SIGHUP, handle_sighup);
     while (true)
     {
         std::string kLineSubscriptionString{
@@ -46,12 +47,16 @@ void MarketData::init(const std::shared_ptr<Config> &config)
         };
         std::string quoteSubscriptionString{"/ws/" + _symbol.getWebsocketSymbol() + "@bookTicker"};
         binance::Websocket::init();
-        LOGINFO("Subscribing to:", kLineSubscriptionString);
+        PLOG_DEBUG << "Subscribing to:" << kLineSubscriptionString;
         binance::Websocket::connect_endpoint(handleKlines, kLineSubscriptionString.c_str());
-        LOGINFO("Subscribing to:", quoteSubscriptionString);
+        PLOG_DEBUG << "Subscribing to:" << quoteSubscriptionString;
         binance::Websocket::connect_endpoint(handleQuotes, quoteSubscriptionString.c_str());
         binance::Websocket::enter_event_loop();
-        LOGINFO("error exiting enter_event_loop and we will try again after 5sec");
+        PLOG_DEBUG << "error exiting enter_event_loop and we will try again after 5sec";
+        if (sig_caught) {
+            PLOG_DEBUG << "Received SIGHUP signal - Exiting!";
+            return;
+        }
         sleep(5);
     }
 }

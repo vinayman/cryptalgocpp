@@ -39,6 +39,7 @@ _config(config)
 , _marketData(TMarketData::getInstance(config))
 , _strategy(nullptr)
 , _marketDataThread(&Factory<TMarketData, TOrdApi>::subscribeMarketData, this)
+, _orderInterface(std::make_shared<TOrdApi>(std::string{""}, std::string{""}))
 {}
 
 template<typename TMarketData, typename TOrdApi>
@@ -61,13 +62,12 @@ Factory<TMarketData, TOrdApi>::loadFactoryMethod() {
     std::string factoryMethodName = _config->get("strategy");
     std::string lib = _config->get("strategy_library");
     std::stringstream info;
-    info << "Loading strategy ... " << LOG_VAR(lib) << LOG_VAR(factoryMethodName);
-    LOGINFO(info.str());
+    PLOG_DEBUG << "Loading strategy ... " << LOG_VAR(lib) << LOG_VAR(factoryMethodName);
     _handle = dlopen(lib.c_str(), RTLD_LAZY);
     if (!_handle) {
         std::stringstream message;
         message << "Couldn't load " << LOG_VAR(lib) << LOG_VAR(dlerror());
-        LOGINFO(message.str());
+        PLOG_DEBUG << message.str();
         throw std::runtime_error(message.str());
     }
 
@@ -79,7 +79,7 @@ Factory<TMarketData, TOrdApi>::loadFactoryMethod() {
         dlclose(_handle);
         std::stringstream msg;
         msg << "Couln't load symbol " << LOG_VAR(factoryMethodName) << LOG_VAR(dlsym_error);
-        LOGINFO(msg.str());
+        PLOG_DEBUG << msg.str();
         throw std::runtime_error(msg.str());
     }
 

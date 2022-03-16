@@ -27,6 +27,7 @@ include_directories(${CURL_INCLUDE})
 include_directories(${BINACPP_INCLUDE})
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${PLOG_INCLUDE})
 
 target_link_libraries(test_cryptalgo
         pthread

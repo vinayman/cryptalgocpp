@@ -1,0 +1,8 @@
+{
+	"name": "cryptalgocpp",
+	"symbol": "BNBUSDT",
+	"subscription_period": "1m",
+	"strategy_library": "/workspaces/cryptalgocpp/build/src/strategy/libcryptalgo_strategies.so",
+	"strategy": "RegisterSimpleStrategy",
+	"log_directory": "/workspaces/cryptalgocpp/cryptalgocpp.log"
+}

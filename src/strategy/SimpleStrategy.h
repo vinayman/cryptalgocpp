@@ -24,7 +24,7 @@ void SimpleStrategy<TOrdApi>::onKline(const std::shared_ptr<Event>& event_)
 {
     std::shared_ptr<model::KLine> klinePtr = event_->getKlinePtr();
     model::KLine kline = *klinePtr.get();
-    LOGINFO(kline);
+    PLOG_DEBUG << kline;
 }
 
 template <typename TOrdApi>
@@ -32,5 +32,5 @@ void SimpleStrategy<TOrdApi>::onQuote(const std::shared_ptr<Event>& event_)
 {
     std::shared_ptr<model::Quote> quotePtr = event_->getQuotePtr();
     this->setQuote(quotePtr);
-    LOGINFO(this->getQuote());
+    PLOG_DEBUG << this->getQuote();
 }

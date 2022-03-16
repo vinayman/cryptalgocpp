@@ -1,9 +1,11 @@
-#include <signal.h>
 #include <iostream>
 #include <memory>
 
 #include <boost/program_options.hpp>
 #include <boost/exception/exception.hpp>
+
+#include "plog/Log.h"
+#include "plog/Initializers/RollingFileInitializer.h"
 
 #include "Utils.h"
 #include "Config.h"
@@ -11,14 +13,6 @@
 #include "MarketData.h"
 #include "OrderInterface.h"
 
-
-static volatile sig_atomic_t sig_caught = 0;
-
-void handle_sighup(int signum)
-{
-    if (signum == SIGHUP)
-        sig_caught = 1;
-}
 
 int main(int argc, char* argv [])
 {
@@ -41,18 +35,25 @@ int main(int argc, char* argv [])
     std::shared_ptr<Config> config = std::make_shared<Config>
                                      (vm.at("config").as<std::string>());
 
-    LOGINFO(config->get("name"));
+    if (!config->configParamExists("log_directory"))
+    {
+        LOGDEBUG("Please specifiy log_directory in config.json");
+        BOOST_THROW_EXCEPTION(std::out_of_range("No log_directory provided in config"));
+    }
+
+    std::string logDirectory = config->get("log_directory");
+    plog::init(plog::debug, logDirectory.c_str());
 
     signal(SIGHUP, handle_sighup);
 
     auto factory = std::make_unique<Factory<MarketData, OrderInterface>>(config);
-    LOGINFO("Initializing strategy");
+    PLOG_DEBUG << "Initializing strategy " << config->get("name");
     factory->initStrategy();
     auto strategy = factory->getStrategy();
     while (strategy->shouldEvaluate())
     {
         if (sig_caught) {
-            LOGINFO("Received SIGHUP signal - Exiting!");
+            PLOG_DEBUG << "Received SIGHUP signal - Exiting!";
             return sig_caught;
         }
         strategy->evaluate();

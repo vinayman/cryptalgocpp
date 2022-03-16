@@ -10,6 +10,7 @@
 
 #include <boost/program_options.hpp>
 #include <json/json.h>
+#include <plog/Log.h>
 
 #include "Utils.h"
 

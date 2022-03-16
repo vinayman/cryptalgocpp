@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <signal.h>
 #include <unistd.h>
 #include <iostream>
 #include <iosfwd>
@@ -36,3 +37,11 @@ void Log(const std::experimental::source_location& location,
 // types
 using Guard = std::lock_guard<std::mutex>;
 using UniqueGuard = std::unique_lock<std::mutex>;
+
+// Signal Handling
+static volatile sig_atomic_t sig_caught = 0;
+static void handle_sighup(int signum)
+{
+    if (signum == SIGHUP)
+        sig_caught = 1;
+}

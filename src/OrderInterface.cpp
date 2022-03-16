@@ -3,3 +3,14 @@
 //
 
 #include "OrderInterface.h"
+
+
+void OrderInterface::init()
+{
+    _account = std::make_shared<binance::Account>(_server, _apiKey, _secretKey);
+}
+
+void OrderInterface::sendOrder()
+{
+    //_account->sendOrder();
+}

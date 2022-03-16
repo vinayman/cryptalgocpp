@@ -56,12 +56,12 @@ void Strategy<TOrdApi>::evaluate() {
             onQuote(event);
             break;
         default:
-            LOGINFO("Unrecognized event");
+            PLOG_DEBUG << "Unrecognized event";
             break;
     }
     if (_allocations.hasChanged())
     {
-        LOGINFO("Allocations have changed");
+        PLOG_DEBUG << "Allocations have changed";
         // handleAllocations();
         _allocations.setUnchanged();
     }

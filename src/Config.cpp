@@ -11,7 +11,6 @@ Config::Config(const std::basic_string<char>& configFile) :
     std::ifstream cfgfile(configFile, std::ifstream::binary);
     Json::Value root;
     cfgfile >> root;
-    LOGINFO("Done", root);
     if (!root.empty())
     {
         for (Json::ValueConstIterator itr = root.begin() ; itr != root.end() ; itr++)

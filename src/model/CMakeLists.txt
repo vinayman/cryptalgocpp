@@ -3,6 +3,7 @@ include_directories(${JSONCPP_INCLUDE})
 include_directories(${CURL_INCLUDE})
 include_directories(${BINACPP_INCLUDE})
 include_directories(${Boost_INCLUDE_DIR})
+include_directories(${PLOG_INCLUDE})
 include_directories(${PROJECT_SOURCE_DIR}/src/)
 
 add_library(cryptalgomodel SHARED

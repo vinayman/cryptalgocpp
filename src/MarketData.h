@@ -3,14 +3,13 @@
 //
 
 #pragma once
-
 #include <mutex>
 #include <queue>
 #include <iostream>
 
 #include <boost/exception/exception.hpp>
-
 #include "binance_websocket.h"
+#include <plog/Log.h>
 
 #include "Utils.h"
 #include "Config.h"
@@ -50,7 +49,7 @@ private:
 
 public:
     inline static std::shared_ptr<MarketData> _marketDataInstance = nullptr;
-    [[noreturn]] void subscribe();
+    void subscribe();
     void init(const std::shared_ptr<Config> &config);
 
     static std::shared_ptr<MarketData> getInstance(const std::shared_ptr<Config> &config);

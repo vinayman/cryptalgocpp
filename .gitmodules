@@ -13,3 +13,6 @@
 [submodule "thirdparty/binance-cxx-api/ThirdParty/curl"]
 	path = thirdparty/binance-cxx-api/ThirdParty/curl
 	url = https://github.com/curl/curl.git
+[submodule "thirdparty/plog"]
+	path = thirdparty/plog
+	url = https://github.com/SergiusTheBest/plog.git
