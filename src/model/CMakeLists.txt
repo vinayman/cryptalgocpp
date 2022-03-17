@@ -14,4 +14,6 @@ add_library(cryptalgomodel SHARED
         Symbol.h
         Allocation.h
         Allocations.h
-        Allocations.cpp)
+        Allocations.cpp
+        Trade.h
+        Trade.cpp)

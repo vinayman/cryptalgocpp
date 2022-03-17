@@ -12,6 +12,7 @@ private:
     using StrategyBase = Strategy<TOrdApi>;
     void onKline(const std::shared_ptr<Event>& event_) override;
     void onQuote(const std::shared_ptr<Event>& event_) override;
+    void onTrade(const std::shared_ptr<Event>& event_) override;
 };
 
 template <typename TOrdApi>
@@ -33,4 +34,12 @@ void SimpleStrategy<TOrdApi>::onQuote(const std::shared_ptr<Event>& event_)
     std::shared_ptr<model::Quote> quotePtr = event_->getQuotePtr();
     this->setQuote(quotePtr);
     PLOG_DEBUG << this->getQuote();
+}
+
+template <typename TOrdApi>
+void SimpleStrategy<TOrdApi>::onTrade(const std::shared_ptr<Event>& event_)
+{
+    std::shared_ptr<model::Trade> tradePtr = event_->getTradePtr();
+    model::Trade trade = *tradePtr.get();
+    PLOG_DEBUG << trade;
 }

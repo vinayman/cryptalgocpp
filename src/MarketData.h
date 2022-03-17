@@ -17,6 +17,7 @@
 #include "model/Symbol.h"
 #include "model/Quote.h"
 #include "model/KLines.h"
+#include "model/Trade.h"
 
 using namespace binance;
 
@@ -42,6 +43,7 @@ private:
     static int handleKlines(Json::Value& json_result);
     static int handlePrice(const Json::Value& json_result);
     static int handleQuotes(Json::Value& json_result);
+    static int handleTrades(Json::Value& json_result);
     model::Symbol getSymbol() const { return _symbol ; };
     
     template<typename T>

@@ -39,7 +39,6 @@ void MarketData::init(const std::shared_ptr<Config> &config)
 
 void MarketData::subscribe()
 {
-    signal(SIGHUP, handle_sighup);
     while (true)
     {
         std::string kLineSubscriptionString{
@@ -51,12 +50,12 @@ void MarketData::subscribe()
         binance::Websocket::connect_endpoint(handleKlines, kLineSubscriptionString.c_str());
         PLOG_DEBUG << "Subscribing to:" << quoteSubscriptionString;
         binance::Websocket::connect_endpoint(handleQuotes, quoteSubscriptionString.c_str());
+        std::string tradeSubscriptionString{"/ws/" + _symbol.getWebsocketSymbol() + "@trade"};
+        PLOG_DEBUG << "Subscribing to:" << tradeSubscriptionString;
+        binance::Websocket::connect_endpoint(handleTrades, tradeSubscriptionString.c_str());
+        PLOG_DEBUG << "Entering event loop";
         binance::Websocket::enter_event_loop();
         PLOG_DEBUG << "error exiting enter_event_loop and we will try again after 5sec";
-        if (sig_caught) {
-            PLOG_DEBUG << "Received SIGHUP signal - Exiting!";
-            return;
-        }
         sleep(5);
     }
 }
@@ -86,6 +85,13 @@ int MarketData::handleQuotes(Json::Value& json_result)
 {
     auto quote = model::Quote(json_result, true);
     MarketData::getInstance(nullptr)->update(std::make_shared<model::Quote>(quote));
+    return 0;
+}
+
+int MarketData::handleTrades(Json::Value& json_result)
+{
+    auto trade = model::Trade(json_result, true);
+    MarketData::getInstance(nullptr)->update(std::make_shared<model::Trade>(trade));
     return 0;
 }
 

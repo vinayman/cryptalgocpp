@@ -13,6 +13,7 @@
 #include "Utils.h"
 #include "model/KLines.h"
 #include "model/Quote.h"
+#include "model/Trade.h"
 #include "model/Allocation.h"
 #include "model/Allocations.h"
 
@@ -25,6 +26,7 @@ public:
     void createAllocation(const model::Side& side_, const model::OrderAction& orderAction_);
     virtual void onKline(const std::shared_ptr<Event>& event) = 0;
     virtual void onQuote(const std::shared_ptr<Event>& event) = 0;
+    virtual void onTrade(const std::shared_ptr<Event>& event) = 0;
     void setQuote(const std::shared_ptr<model::Quote>& quotePtr_) {  _currentQuotePtr = quotePtr_ ; };
     model::Quote& getQuote() {return *_currentQuotePtr.get(); };
 private:
@@ -54,6 +56,9 @@ void Strategy<TOrdApi>::evaluate() {
             break;
         case EventType::Quote:
             onQuote(event);
+            break;
+        case EventType::Trade:
+            onTrade(event);
             break;
         default:
             PLOG_DEBUG << "Unrecognized event";
