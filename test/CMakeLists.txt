@@ -12,6 +12,10 @@ FILE(GLOB ModelsToTest ../src/model/*.cpp)
 add_library(test_cryptalgo
         ${SourcesToTest}
         ${ModelsToTest}
+        framework/TestMarketDataInterface.h
+        framework/TestMarketDataInterface.cpp
+        framework/InputParser.h
+        framework/InputParser.cpp
 )
 
 add_executable(testCryptalgo

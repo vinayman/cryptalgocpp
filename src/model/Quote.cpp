@@ -13,3 +13,14 @@ _symbol(std::string{""})
     _askPrice = atof(jsonValue["a"].asString().c_str());
     _askQty = atof(jsonValue["A"].asString().c_str());
 }
+
+Json::Value model::Quote::toJson()
+{
+    Json::Value quoteJson;
+    quoteJson["s"] = getSymbol().toString();
+    quoteJson["b"] = getBidPrice();
+    quoteJson["B"] = getBidQty();
+    quoteJson["a"] = getAskPrice();
+    quoteJson["A"] = getAskQty();
+    return quoteJson;
+}

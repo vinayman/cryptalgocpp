@@ -10,7 +10,7 @@
 #include "Utils.h"
 #include "Config.h"
 #include "Factory.h"
-#include "MarketData.h"
+#include "MarketDataInterface.h"
 #include "OrderInterface.h"
 
 
@@ -46,7 +46,7 @@ int main(int argc, char* argv [])
 
     signal(SIGHUP, handle_sighup);
 
-    auto factory = std::make_unique<Factory<MarketData, OrderInterface>>(config);
+    auto factory = std::make_unique<Factory<MarketDataInterface, OrderInterface>>(config);
     PLOG_DEBUG << "Initializing strategy " << config->get("name");
     factory->initStrategy();
     auto strategy = factory->getStrategy();

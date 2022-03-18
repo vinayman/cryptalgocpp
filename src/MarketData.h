@@ -29,36 +29,34 @@ public:
 };
 
 class MarketData {
-private:
+protected:
     static std::mutex _mutex;
     std::shared_ptr<Config> _config = nullptr;
     model::Symbol _symbol;
     std::string _mdSubscriptionPeriod{};
     std::priority_queue<std::shared_ptr<Event>, std::vector<std::shared_ptr<Event>>, QueueArrange> _eventBuffer;
-
-    MarketData() :
-            _symbol(model::Symbol(std::string{"BNBUSDT"}))
-            , _mdSubscriptionPeriod("1m") {}
-
-    static int handleKlines(Json::Value& json_result);
-    static int handlePrice(const Json::Value& json_result);
-    static int handleQuotes(Json::Value& json_result);
-    static int handleTrades(Json::Value& json_result);
     model::Symbol getSymbol() const { return _symbol ; };
     
     template<typename T>
     void update(const std::shared_ptr<T>& data_);
 
+    static int handleKlines(Json::Value& json_result);
+    static int handlePrice(const Json::Value& json_result);
+    static int handleQuotes(Json::Value& json_result);
+    static int handleTrades(Json::Value& json_result);
+
+    explicit MarketData() :
+            _symbol(model::Symbol(std::string{"BNBUSDT"}))
+            , _mdSubscriptionPeriod("1m") {}
+
 public:
     inline static std::shared_ptr<MarketData> _marketDataInstance = nullptr;
-    void subscribe();
-    void init(const std::shared_ptr<Config> &config);
 
     static std::shared_ptr<MarketData> getInstance(const std::shared_ptr<Config> &config);
+    void init(const std::shared_ptr<Config> &config);
 
     std::shared_ptr<Event> read();
 
     MarketData(MarketData const&) = delete;
     void operator=(MarketData const&)  = delete;
-
 };

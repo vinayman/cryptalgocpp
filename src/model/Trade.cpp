@@ -17,3 +17,18 @@ symbol(std::string{""})
     buyerOrderId = atof(jsonValue["b"].asString().c_str());
     sellerOrderId = atof(jsonValue["a"].asString().c_str());
 }
+
+Json::Value model::Trade::toJson()
+{
+    Json::Value tradeJson;
+    tradeJson["e"] = "trade";
+    tradeJson["E"] = getEventTime();
+    tradeJson["s"] = getSymbol().toString();
+    tradeJson["t"] = getTradeId();
+    tradeJson["p"] = getPrice();
+    tradeJson["q"] = getQuantity();
+    tradeJson["b"] = getBuyerOrderId();
+    tradeJson["a"] = getSellerOrderId();
+    tradeJson["T"] = getTradeTime();
+    return tradeJson;
+}

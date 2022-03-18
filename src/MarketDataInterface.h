@@ -1,20 +1,18 @@
-//
-// Created by Vinay Manektalla on 19/07/2021.
-//
-
 #pragma once
+
 #include <memory>
 
-#include "model/KLines.h"
-#include "model/Price.h"
-#include "model/Quote.h"
+#include "binance_websocket.h"
+
+#include "Utils.h"
+#include "MarketData.h"
 #include "Config.h"
+#include "model/Symbol.h"
 
-class MarketDataInterface {
+class MarketData;
+
+class MarketDataInterface : public MarketData
+{
 public:
-    using KlinePtr = std::shared_ptr<model::KLine>;
-    using PricePtr = std::shared_ptr<model::Price>;
-    using QuotePtr = std::shared_ptr<model::Quote>;
-
-    MarketDataInterface();
+    void subscribe();
 };

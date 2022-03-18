@@ -36,7 +36,7 @@ public:
 template<typename TMarketData, typename TOrdApi>
 Factory<TMarketData, TOrdApi>::Factory(const std::shared_ptr<Config>& config) :
 _config(config)
-, _marketData(TMarketData::getInstance(config))
+, _marketData(std::static_pointer_cast<TMarketData>(TMarketData::getInstance(config)))
 , _strategy(nullptr)
 , _marketDataThread(&Factory<TMarketData, TOrdApi>::subscribeMarketData, this)
 , _orderInterface(std::make_shared<TOrdApi>(std::string{""}, std::string{""}))
