@@ -5,11 +5,8 @@
 #include <sstream>
 #include <unordered_map>
 
-#include <boost/exception/exception.hpp>
-
 #include "Utils.h"
 
-template <typename TParam>
 class InputParser
 {
 public:
@@ -22,16 +19,18 @@ public:
         Unknown
     };
 private:
-    std::unordered_map<std::string, TParam> params;
+    std::unordered_map<std::string, std::string> params;
     std::string inputString;
 public:
     explicit InputParser(const std::string& inputString_) :
         inputString(std::move(inputString_)) {}
+    explicit InputParser() = default;
 
     Type type;
-    void parseInputString(const std::string& inputString);
-    std::unordered_map<std::string, TParam>& getParams() { return params; };
+    void parseInputString(const std::string& inputString_);
+    std::unordered_map<std::string, std::string>& getParams() { return params; };
     Type getType();
     bool paramExists(const std::string &key);
-    TParam& at(const std::string& key);
+    std::string& at(const std::string& key);
+    std::string getInputString() { return inputString; };
 };

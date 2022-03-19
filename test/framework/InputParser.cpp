@@ -1,60 +1,52 @@
 #include "InputParser.h"
 
-template <typename TParam>
-void InputParser<TParam>::parseInputString(const std::string& inputString)
+void InputParser::parseInputString(const std::string& inputString_)
 {
     std::string chunk;
-    std::istringstream iss(inputString);
+    std::istringstream iss(inputString_);
     while (getline(iss, chunk, ' '))
     {
         size_t pos = chunk.find("=");
         if (pos == std::string::npos)
             continue;
         std::string key = chunk.substr(0, pos);
-        TParam value = chunk.substr(pos+1);
+        std::string value = chunk.substr(pos+1);
         params[key] = value;
     }
+    inputString = inputString_;
 }
 
-template <typename TParam>
-InputParser<TParam>::Type InputParser<TParam>::getType()
+InputParser::Type InputParser::getType()
 {
     if (paramExists("TYPE"))
     {
-        switch (params.at("TYPE"))
-        {
-            case "QUOTE":
-                return Type::Quote;
-            case "TRADE":
-                return Type::Trade;
-            case "KLINE":
-                return Type::Kline;
-            default:
-                return Type::Unknown;
-        }
+        if (params.at("TYPE") == "QUOTE")
+            return Type::Quote;
+        else if (params.at("TYPE") == "TRADE")
+            return Type::Trade;
+        else if (params.at("TYPE") == "KLINE")
+            return Type::Kline;
     }
     return Type::Unknown;
 }
 
-template <typename TParam>
-bool InputParser<TParam>::paramExists(const std::string &key) {
+bool InputParser::paramExists(const std::string &key) {
     if (params.find(key) != params.end()) {
         return true;
     }
     return false;
 }
 
-template <typename TParam>
-TParam& InputParser<TParam>::at(const std::string& key)
+std::string& InputParser::at(const std::string& key)
 {
     try 
     {
-        params.at(key);
+        return params.at(key);
     }
     catch (std::exception& e)
     {
         std::stringstream message;
         message << "Mandatory param missing: " << LOG_VAR(key) << " " << LOG_VAR(inputString);
-        BOOST_THROW_EXCEPTION<TParam>(std::runtime_error(message.str()));
+        throw std::runtime_error(message.str());
     }
 }

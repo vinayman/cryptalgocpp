@@ -37,6 +37,14 @@ Config::Config(const std::basic_string<char>& configFile) :
     }
 }
 
+Config::Config(const std::unordered_map<std::string, std::string>& configMap)
+{
+    for (const auto& it : configMap)
+    {
+        set(it.first, it.second);
+    }
+}
+
 const std::string& Config::get(const std::string& key)
 {
     return _config.at(key);

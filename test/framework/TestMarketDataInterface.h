@@ -6,7 +6,6 @@
 #include "model/Trade.h"
 #include "model/Quote.h"
 
-template <typename TParserParam>
 class TestMarketDataInterface : public MarketData
 {
 protected:
@@ -14,12 +13,12 @@ protected:
     long sellOrderId;
     long tradeId;
 public:
-    InputParser<TParserParam> inputParser;
+    InputParser inputParser;
     explicit TestMarketDataInterface() : inputParser(), buyOrderId(0), sellOrderId(0), tradeId(0) {}
     void subscribe() {};
     void operator << (const std::string& marketDataString);
 
-    void quoteHandler(const std::unordered_map<std::string, TParserParam>& params);
-    void tradeHandler(const std::unordered_map<std::string, TParserParam>& params);
-    void klineHandler(const std::unordered_map<std::string, TParserParam>& params);
+    void quoteHandler(const std::unordered_map<std::string, std::string>& params);
+    void tradeHandler(const std::unordered_map<std::string, std::string>& params);
+    void klineHandler(const std::unordered_map<std::string, std::string>& params);
 };
