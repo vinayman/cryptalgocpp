@@ -1,9 +1,9 @@
 #include "InputParser.h"
 
-void InputParser::parseInputString(const std::string& inputString_)
+void InputParser::parseInputString()
 {
     std::string chunk;
-    std::istringstream iss(inputString_);
+    std::istringstream iss(inputString);
     while (getline(iss, chunk, ' '))
     {
         size_t pos = chunk.find("=");
@@ -13,7 +13,6 @@ void InputParser::parseInputString(const std::string& inputString_)
         std::string value = chunk.substr(pos+1);
         params[key] = value;
     }
-    inputString = inputString_;
 }
 
 InputParser::Type InputParser::getType()
@@ -30,14 +29,14 @@ InputParser::Type InputParser::getType()
     return Type::Unknown;
 }
 
-bool InputParser::paramExists(const std::string &key) {
+bool InputParser::paramExists(const std::string& key) {
     if (params.find(key) != params.end()) {
         return true;
     }
     return false;
 }
 
-std::string& InputParser::at(const std::string& key)
+const std::string& InputParser::at(const std::string& key) const
 {
     try 
     {
@@ -46,7 +45,7 @@ std::string& InputParser::at(const std::string& key)
     catch (std::exception& e)
     {
         std::stringstream message;
-        message << "Mandatory param missing: " << LOG_VAR(key) << " " << LOG_VAR(inputString);
+        message << "Param: " << LOG_VAR(key) << " does not exist in inputString";
         throw std::runtime_error(message.str());
     }
 }

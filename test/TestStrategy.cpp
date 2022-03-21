@@ -15,6 +15,6 @@ GTEST_TEST(Strategy, test_strategy)
         }
     );
     env << "TYPE=QUOTE symbol=BNBUSDT bidPrice=300.1 bidQty=1000.5 askPrice=301.1 askQty=1000.1";
-    auto inputString = env.getFactory()->getMarketData()->inputParser.getInputString();
-    ASSERT_EQ(std::string{"TYPE=QUOTE symbol=BNBUSDT bidPrice=300.1 bidQty=1000.5 askPrice=301.1 askQty=1000.1"}, inputString);
+    auto quote = env.getFactory()->getStrategy()->getQuote();
+    ASSERT_EQ(quote.getBidPrice(), double(300.1));
 }

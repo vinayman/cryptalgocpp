@@ -1,40 +1,47 @@
 #include "TestMarketDataInterface.h"
 
 void TestMarketDataInterface::operator<<(const std::string &marketDataString) {
-    inputParser.parseInputString(marketDataString);
+    auto inputParser = InputParser(marketDataString);
+    inputParser.parseInputString();
 
     switch (inputParser.getType())
     {
         case InputParser::Type::Quote:
-            quoteHandler(inputParser.getParams());
+            quoteHandler(inputParser);
+            break;
         case InputParser::Type::Kline:
-            klineHandler(inputParser.getParams());
+            klineHandler(inputParser);
+            break;
         case InputParser::Type::Trade:
-            tradeHandler(inputParser.getParams());
+            tradeHandler(inputParser);
+            break;
+        default:
+            throw std::runtime_error("Unrecognized market data event!");
+            break;
     }
 }
 
-void TestMarketDataInterface::quoteHandler(const std::unordered_map<std::string, std::string>& params)
+void TestMarketDataInterface::quoteHandler(const InputParser& inputParser)
 {
     auto quote = model::Quote(
-        params.at("symbol"),
-        std::stod(params.at("bidPrice")),
-        std::stod(params.at("bidQty")),
-        std::stod(params.at("askPrice")),
-        std::stod(params.at("askQty"))
+        inputParser.at("symbol"),
+        std::stod(inputParser.at("bidPrice")),
+        std::stod(inputParser.at("bidQty")),
+        std::stod(inputParser.at("askPrice")),
+        std::stod(inputParser.at("askQty"))
     );
     auto quoteJson = quote.toJson();
     MarketData::getInstance(nullptr)->handleQuotes(quoteJson);
 }
 
-void TestMarketDataInterface::tradeHandler(const std::unordered_map<std::string, std::string>& params)
+void TestMarketDataInterface::tradeHandler(const InputParser& inputParser)
 {
     auto trade = model::Trade(
-        params.at("symbol"),
+        inputParser.at("symbol"),
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-        std::stod(params.at("price")),
-        std::stod(params.at("quantity")),
+        std::stod(inputParser.at("price")),
+        std::stod(inputParser.at("quantity")),
         buyOrderId,
         sellOrderId,
         tradeId
@@ -46,19 +53,19 @@ void TestMarketDataInterface::tradeHandler(const std::unordered_map<std::string,
     tradeId++;
 }
 
-void TestMarketDataInterface::klineHandler(const std::unordered_map<std::string, std::string>& params)
+void TestMarketDataInterface::klineHandler(const InputParser& inputParser)
 {
     auto kline = model::KLine(
-        params.at("symbol"),
+        inputParser.at("symbol"),
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-        std::stod(params.at("openPrice")),
-        std::stod(params.at("highPrice")),
-        std::stod(params.at("lowPrice")),
-        std::stod(params.at("closePrice")),
-        std::stod(params.at("volume")),
+        std::stod(inputParser.at("openPrice")),
+        std::stod(inputParser.at("highPrice")),
+        std::stod(inputParser.at("lowPrice")),
+        std::stod(inputParser.at("closePrice")),
+        std::stod(inputParser.at("volume")),
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-        std::stod(params.at("quoteAssetVolume")),
-        std::stoi(params.at("numOfTrades"))
+        std::stod(inputParser.at("quoteAssetVolume")),
+        std::stoi(inputParser.at("numOfTrades"))
     );
     Json::Value klineJson = kline.toJson();
     MarketData::getInstance(nullptr)->handleKlines(klineJson);

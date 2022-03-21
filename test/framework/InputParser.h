@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <unordered_map>
+#include <map>
 
 #include "Utils.h"
 
@@ -19,18 +19,15 @@ public:
         Unknown
     };
 private:
-    std::unordered_map<std::string, std::string> params;
+    std::map<std::string, std::string> params;
     std::string inputString;
 public:
-    explicit InputParser(const std::string& inputString_) :
-        inputString(std::move(inputString_)) {}
-    explicit InputParser() = default;
+    explicit InputParser(const std::string& inputString_) : params(), inputString(std::move(inputString_)) {};
 
     Type type;
-    void parseInputString(const std::string& inputString_);
-    std::unordered_map<std::string, std::string>& getParams() { return params; };
+    void parseInputString();
+    std::map<std::string, std::string>& getParams() { return params; };
     Type getType();
-    bool paramExists(const std::string &key);
-    std::string& at(const std::string& key);
-    std::string getInputString() { return inputString; };
+    bool paramExists(const std::string& key);
+    const std::string& at(const std::string& key) const;
 };
