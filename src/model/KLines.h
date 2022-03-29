@@ -9,12 +9,13 @@
 #include <json/json.h>
 
 #include "../Utils.h"
+#include "MarketDataObject.h"
 #include "Symbol.h"
 
 namespace model
 {
 
-class KLine
+class KLine: public MarketDataObject
 {
     /*
         * FROM Market

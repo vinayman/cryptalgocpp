@@ -12,52 +12,52 @@
 #include "strategy/Strategy.h"
 #include "strategy/SimpleStrategy.h"
 
-template <typename TMarketData, typename TOrdApi>
+template <typename TMarketData, typename TOrdApi, typename TStatisticsMarketDataObj>
 class Factory {
 private:
     void subscribeMarketData();
     std::shared_ptr<Config> _config = nullptr;
     std::shared_ptr<TMarketData> _marketData = nullptr;
     std::shared_ptr<TOrdApi> _orderInterface = nullptr;
-    std::shared_ptr<Strategy<TOrdApi>> _strategy = nullptr;
+    std::shared_ptr<Strategy<TOrdApi, TStatisticsMarketDataObj>> _strategy = nullptr;
     std::thread _marketDataThread;
-    using factoryMethod_t = std::shared_ptr<Strategy<TOrdApi>>(*)(std::shared_ptr<TMarketData>, std::shared_ptr<TOrdApi>);
+    using factoryMethod_t = std::shared_ptr<Strategy<TOrdApi, TStatisticsMarketDataObj>>(*)(std::shared_ptr<TMarketData>, std::shared_ptr<TOrdApi>);
     void* _handle;
 public:
     explicit Factory(const std::shared_ptr<Config>& config);
-    const std::shared_ptr<Strategy<TOrdApi>>& getStrategy() const { return _strategy; };
+    const std::shared_ptr<Strategy<TOrdApi, TStatisticsMarketDataObj>>& getStrategy() const { return _strategy; };
     const std::shared_ptr<TMarketData>& getMarketData() const { return _marketData; };
     ~Factory();
     factoryMethod_t loadFactoryMethod();
     void initStrategy();
 };
 
-template<typename TMarketData, typename TOrdApi>
-Factory<TMarketData, TOrdApi>::Factory(const std::shared_ptr<Config>& config) :
+template <typename TMarketData, typename TOrdApi, typename TStatisticsMarketDataObj>
+Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::Factory(const std::shared_ptr<Config>& config) :
 _config(config)
 , _marketData(std::static_pointer_cast<TMarketData>(TMarketData::getInstance(config)))
 , _strategy(nullptr)
-, _marketDataThread(&Factory<TMarketData, TOrdApi>::subscribeMarketData, this)
+, _marketDataThread(&Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::subscribeMarketData, this)
 , _orderInterface(std::make_shared<TOrdApi>(std::string{""}, std::string{""}))
 {}
 
-template<typename TMarketData, typename TOrdApi>
-void Factory<TMarketData, TOrdApi>::subscribeMarketData()
+template <typename TMarketData, typename TOrdApi, typename TStatisticsMarketDataObj>
+void Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::subscribeMarketData()
 {
     _marketData->subscribe();
 }
 
-template<typename TMarketData, typename TOrdApi>
-Factory<TMarketData, TOrdApi>::~Factory()
+template <typename TMarketData, typename TOrdApi, typename TStatisticsMarketDataObj>
+Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::~Factory()
 {
     _marketDataThread.join();
     _marketData = nullptr;
     dlclose(_handle);
 }
 
-template<typename TMarketData, typename TOrdApi>
-typename Factory<TMarketData, TOrdApi>::factoryMethod_t
-Factory<TMarketData, TOrdApi>::loadFactoryMethod() {
+template <typename TMarketData, typename TOrdApi, typename TStatisticsMarketDataObj>
+typename Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::factoryMethod_t
+Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::loadFactoryMethod() {
     std::string factoryMethodName = _config->get("strategy");
     std::string lib = _config->get("strategy_library");
     std::stringstream info;
@@ -86,10 +86,10 @@ Factory<TMarketData, TOrdApi>::loadFactoryMethod() {
 
 }
 
-template<typename TMarketData, typename TOrdApi>
-void Factory<TMarketData, TOrdApi>::initStrategy() {
+template <typename TMarketData, typename TOrdApi, typename TStatisticsMarketDataObj>
+void Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::initStrategy() {
 
-    Factory<TMarketData, TOrdApi>::factoryMethod_t factoryMethod = loadFactoryMethod();
-    std::shared_ptr<Strategy<TOrdApi>> strategy = factoryMethod(_marketData, _orderInterface);
+    Factory<TMarketData, TOrdApi, TStatisticsMarketDataObj>::factoryMethod_t factoryMethod = loadFactoryMethod();
+    std::shared_ptr<Strategy<TOrdApi, TStatisticsMarketDataObj>> strategy = factoryMethod(_marketData, _orderInterface);
     _strategy = strategy;
 }

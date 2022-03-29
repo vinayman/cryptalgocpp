@@ -11,13 +11,14 @@
 #include "MarketData.h"
 #include "Event.h"
 #include "Utils.h"
+#include "statistics/StatisticsInterface.h"
 #include "model/KLines.h"
 #include "model/Quote.h"
 #include "model/Trade.h"
 #include "model/Allocation.h"
 #include "model/Allocations.h"
 
-template <typename TOrdApi>
+template <typename TOrdApi, typename TStatisticsMarketDataObject>
 class Strategy {
 public:
     Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_);
@@ -34,18 +35,19 @@ private:
     std::shared_ptr<TOrdApi> _orderInterface;
     std::shared_ptr<model::Quote> _currentQuotePtr;
     model::Allocations _allocations;
+    std::vector<statistics::StatisticsInterface<TStatisticsMarketDataObject>> _statisticsChain; 
 };
 
 
-template<typename TOrdApi>
-Strategy<TOrdApi>::Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_) :
+template<typename TOrdApi, typename TStatisticsMarketDataObject>
+Strategy<TOrdApi, TStatisticsMarketDataObject>::Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_) :
 _marketData(marketData_)
 , _orderInterface(orderInterface_)
 , _currentQuotePtr(nullptr)
 {}
 
-template<typename TOrdApi>
-void Strategy<TOrdApi>::evaluate() {
+template<typename TOrdApi, typename TStatisticsMarketDataObject>
+void Strategy<TOrdApi, TStatisticsMarketDataObject>::evaluate() {
     auto event = _marketData->read();
     if (event.get() == nullptr)
         return;
@@ -72,13 +74,13 @@ void Strategy<TOrdApi>::evaluate() {
     }
 }
 
-template<typename TOrdApi>
-bool Strategy<TOrdApi>::shouldEvaluate() {
+template<typename TOrdApi, typename TStatisticsMarketDataObject>
+bool Strategy<TOrdApi, TStatisticsMarketDataObject>::shouldEvaluate() {
     return true;
 }
 
-template<typename TOrdApi>
-void Strategy<TOrdApi>::createAllocation(const model::Side& side_, const model::OrderAction& orderAction_) {
+template<typename TOrdApi, typename TStatisticsMarketDataObject>
+void Strategy<TOrdApi, TStatisticsMarketDataObject>::createAllocation(const model::Side& side_, const model::OrderAction& orderAction_) {
     auto currentQuote = *_currentQuotePtr.get();
     if (_currentQuotePtr == nullptr)
     {

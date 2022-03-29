@@ -3,12 +3,14 @@
 #include <json/json.h>
 
 #include "../Utils.h"
+#include "MarketDataObject.h"
 #include "Symbol.h"
 
 
 namespace model {
 
-class Trade {
+class Trade: public MarketDataObject
+{
     /* From Websocket:
     {
         "e": "trade",     // Event type

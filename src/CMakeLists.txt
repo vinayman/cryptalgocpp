@@ -22,7 +22,9 @@ add_library(cryptalgo SHARED
         OrderInterface.cpp
         OrderInterface.h
         MarketDataInterface.h
-        MarketDataInterface.cpp)
+        MarketDataInterface.cpp
+        statistics/StatisticsInterface.h
+        statistics/SmaStatistic.h)
 
 target_link_libraries(cryptalgo
         binance-cxx-api
