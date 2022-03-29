@@ -21,8 +21,7 @@ private:
     std::shared_ptr<TOrdApi> _orderInterface = nullptr;
     std::shared_ptr<Strategy<TOrdApi>> _strategy = nullptr;
     std::thread _marketDataThread;
-    typedef std::shared_ptr<Strategy<TOrdApi>> (*factoryMethod_t)(
-            std::shared_ptr<TMarketData>,std::shared_ptr<TOrdApi>) ;
+    using factoryMethod_t = std::shared_ptr<Strategy<TOrdApi>>(*)(std::shared_ptr<TMarketData>, std::shared_ptr<TOrdApi>);
     void* _handle;
 public:
     explicit Factory(const std::shared_ptr<Config>& config);

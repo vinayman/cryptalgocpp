@@ -1,5 +1,24 @@
 #include "TestMarketDataInterface.h"
 
+
+std::shared_ptr<TestMarketDataInterface> TestMarketDataInterface::getInstance(const std::shared_ptr<Config> &config)
+{
+    UniqueGuard lock_(MarketData::_mutex);
+    if (_marketDataInstance.get() == nullptr)
+    {
+        static std::shared_ptr<TestMarketDataInterface> marketDataPtr(new TestMarketDataInterface());
+        _marketDataInstance = marketDataPtr;
+        return std::static_pointer_cast<TestMarketDataInterface>(_marketDataInstance);
+    }
+    if (config.get() == nullptr)
+    {
+        if (_marketDataInstance.get() == nullptr)
+            BOOST_THROW_EXCEPTION(std::out_of_range("No MD Instance"));
+        return std::static_pointer_cast<TestMarketDataInterface>(_marketDataInstance);
+    }
+    return std::static_pointer_cast<TestMarketDataInterface>(_marketDataInstance);
+}
+
 void TestMarketDataInterface::operator<<(const std::string &marketDataString) {
     auto inputParser = InputParser(marketDataString);
     inputParser.parseInputString();
@@ -31,7 +50,7 @@ void TestMarketDataInterface::quoteHandler(const InputParser& inputParser)
         std::stod(inputParser.at("askQty"))
     );
     auto quoteJson = quote.toJson();
-    MarketData::getInstance(nullptr)->handleQuotes(quoteJson);
+    TestMarketDataInterface::getInstance(nullptr)->handleQuotes(quoteJson);
 }
 
 void TestMarketDataInterface::tradeHandler(const InputParser& inputParser)
@@ -47,7 +66,7 @@ void TestMarketDataInterface::tradeHandler(const InputParser& inputParser)
         tradeId
     );
     auto tradeJson = trade.toJson();
-    MarketData::getInstance(nullptr)->handleTrades(tradeJson);
+    TestMarketDataInterface::getInstance(nullptr)->handleTrades(tradeJson);
     buyOrderId++;
     sellOrderId++;
     tradeId++;
@@ -68,5 +87,5 @@ void TestMarketDataInterface::klineHandler(const InputParser& inputParser)
         std::stoi(inputParser.at("numOfTrades"))
     );
     Json::Value klineJson = kline.toJson();
-    MarketData::getInstance(nullptr)->handleKlines(klineJson);
+    TestMarketDataInterface::getInstance(nullptr)->handleKlines(klineJson);
 }
