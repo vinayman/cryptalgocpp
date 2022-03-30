@@ -1,6 +1,7 @@
 #include "framework/TestEnv.h"
 
 #include "gtest/gtest.h"
+#include "Utils.h"
 
 GTEST_TEST(Strategy, test_strategy)
 {

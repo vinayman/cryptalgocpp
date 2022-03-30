@@ -37,7 +37,7 @@ Config::Config(const std::basic_string<char>& configFile) :
     }
 }
 
-Config::Config(const std::unordered_map<std::string, std::string>& configMap)
+Config::Config(const std::map<std::string, std::string>& configMap)
 {
     for (const auto& it : configMap)
     {

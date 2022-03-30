@@ -21,7 +21,7 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${PLOG_INCLUDE})
 
-add_library(test_cryptalgo
+add_library(test_cryptalgoFwk
         ${SourcesToTest}
         ${ModelsToTest}
         ${StatisticsToTest}
@@ -38,7 +38,8 @@ add_executable(testCryptalgo
         test_main.cpp
 )
 
-target_link_libraries(test_cryptalgo
+target_link_libraries(test_cryptalgoFwk
+        cryptalgo
         pthread
         dl
         binance-cxx-api
@@ -46,7 +47,7 @@ target_link_libraries(test_cryptalgo
 )
 
 target_link_libraries(testCryptalgo
-        test_cryptalgo
+        test_cryptalgoFwk
         GTest::gtest
         binance-cxx-api
         pthread
@@ -56,7 +57,7 @@ target_link_libraries(testCryptalgo
 
 install(TARGETS
             testCryptalgo
-            test_cryptalgo
+            test_cryptalgoFwk
         RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin
         LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/lib
         )

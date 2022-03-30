@@ -4,7 +4,7 @@
 
 #pragma once
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <fstream>
 #include <any>
 
@@ -17,9 +17,9 @@
 class Config
 {
 protected:
-    std::unordered_map<std::string, std::string> _config;
+    std::map<std::string, std::string> _config;
 public:
-    explicit Config(const std::unordered_map<std::string, std::string>& configMap);
+    explicit Config(const std::map<std::string, std::string>& configMap);
     explicit Config(const std::basic_string<char>& configFile);
     const std::string& get(const std::string& key);
     template <typename Val> void set(const std::string& key, const Val& value);

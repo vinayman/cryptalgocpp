@@ -87,8 +87,8 @@ Factory<TMarketData, TOrdApi>::loadFactoryMethod() {
 }
 
 template<typename TMarketData, typename TOrdApi>
-void Factory<TMarketData, TOrdApi>::initStrategy() {
-
+void Factory<TMarketData, TOrdApi>::initStrategy()
+{
     Factory<TMarketData, TOrdApi>::factoryMethod_t factoryMethod = loadFactoryMethod();
     std::shared_ptr<Strategy<TOrdApi>> strategy = factoryMethod(_marketData, _orderInterface);
     _strategy = strategy;

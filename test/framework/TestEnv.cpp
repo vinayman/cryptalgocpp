@@ -1,6 +1,6 @@
 #include "TestEnv.h"
 
-TestEnv::TestEnv(const std::unordered_map<std::string, std::string>& testConfig) :
+TestEnv::TestEnv(const std::map<std::string, std::string>& testConfig) :
 _config(std::make_shared<Config>(testConfig))
 , _factory(nullptr) 
 {
