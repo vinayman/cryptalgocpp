@@ -7,14 +7,10 @@ include_directories(${PLOG_INCLUDE})
 include_directories(${PROJECT_SOURCE_DIR}/src/)
 
 add_library(cryptalgomodel SHARED
-        MarketDataObject.h
         KLines.cpp
         Price.h
-        Quote.h
         Quote.cpp
         Symbol.h
         Allocation.h
-        Allocations.h
         Allocations.cpp
-        Trade.h
         Trade.cpp)

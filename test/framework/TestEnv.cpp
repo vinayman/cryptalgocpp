@@ -4,7 +4,7 @@ TestEnv::TestEnv(const std::unordered_map<std::string, std::string>& testConfig)
 _config(std::make_shared<Config>(testConfig))
 , _factory(nullptr) 
 {
-    _factory = std::make_unique<Factory<TestMarketDataInterface, OrderInterface, model::MarketDataObject>>(_config);
+    _factory = std::make_unique<Factory<TestMarketDataInterface, OrderInterface>>(_config);
     _factory->initStrategy();
 }
 

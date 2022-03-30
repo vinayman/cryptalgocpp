@@ -9,11 +9,9 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "MarketDataObject.h"
-
 namespace model {
 
-class Symbol: public MarketDataObject
+class Symbol
 {
     std::string symbol{};
 

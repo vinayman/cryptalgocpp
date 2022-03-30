@@ -6,12 +6,11 @@
 #include <string>
 
 #include "Symbol.h"
-#include "MarketDataObject.h"
 #include "../Utils.h"
 
 namespace model {
 
-class Price: public MarketDataObject
+class Price
 {
     Symbol symbol;
     double price;

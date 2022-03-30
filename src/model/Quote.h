@@ -9,12 +9,11 @@
 #include <json/json.h>
 
 #include "../Utils.h"
-#include "MarketDataObject.h"
 #include "Symbol.h"
 
 namespace model {
 
-class Quote: public MarketDataObject
+class Quote
 {
 private:
     Symbol _symbol;

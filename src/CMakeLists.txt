@@ -9,29 +9,29 @@ include_directories(${CURL_INCLUDE})
 include_directories(${BINACPP_INCLUDE})
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${PLOG_INCLUDE})
+include_directories(${PROJECT_SOURCE_DIR}/src/model/)
 
 add_library(cryptalgo SHARED
-        MarketDataInterface.h
+        Utils.h
         Config.cpp
         OrderManager.h
         MarketData.h
         MarketData.cpp
-        KuCoinMarketData.h
+        KuCoinMarketData.cpp
         Factory.h
         Event.h
         OrderInterface.cpp
-        OrderInterface.h
-        MarketDataInterface.h
         MarketDataInterface.cpp
-        statistics/StatisticsInterface.h
-        statistics/SmaStatistic.h)
+        StatisticsInterface.h
+        SmaStatistic.cpp
+        StatisticsChain.cpp)
 
 target_link_libraries(cryptalgo
         binance-cxx-api
         boost_system
         pthread
-        cryptalgomodel
-        )
+        dl
+        cryptalgomodel)
 
 add_subdirectory(strategy)
 

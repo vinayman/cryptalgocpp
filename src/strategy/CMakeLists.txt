@@ -1,10 +1,11 @@
 FILE(GLOB Sources *.cpp)
-add_library(cryptalgo_strategies SHARED Strategies.cpp ${Sources})
+FILE(GLOB Headers *.h)
+add_library(cryptalgo_strategies SHARED Strategies.cpp ${Sources} ${Headers})
 
-target_link_libraries(cryptalgo_strategies cryptalgo)
+target_link_libraries(cryptalgo cryptalgo_strategies)
 
-include_directories(../)
-include_directories(../model/)
+include_directories(${PROJECT_SOURCE_DIR}/src/)
+include_directories(${PROJECT_SOURCE_DIR}/src/model/)
 
 install(TARGETS
         cryptalgo_strategies

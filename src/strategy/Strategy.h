@@ -5,20 +5,23 @@
 #pragma once
 
 #include <iostream>
+#include <variant>
 
 #include <boost/exception/exception.hpp>
 
 #include "MarketData.h"
 #include "Event.h"
 #include "Utils.h"
-#include "statistics/StatisticsInterface.h"
+#include "StatisticsInterface.h"
+#include "SmaStatistic.h"
+#include "StatisticsChain.h"
 #include "model/KLines.h"
 #include "model/Quote.h"
 #include "model/Trade.h"
 #include "model/Allocation.h"
 #include "model/Allocations.h"
 
-template <typename TOrdApi, typename TStatisticsMarketDataObject>
+template <typename TOrdApi>
 class Strategy {
 public:
     Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_);
@@ -30,24 +33,28 @@ public:
     virtual void onTrade(const std::shared_ptr<Event>& event) = 0;
     void setQuote(const std::shared_ptr<model::Quote>& quotePtr_) {  _currentQuotePtr = quotePtr_ ; };
     model::Quote& getQuote() {return *_currentQuotePtr.get(); };
+    statistics::StatisticsChain _statisticsChain;
+
+    template <typename TTradeQuoteKline>
+    void evaluateStatisticsChain(const TTradeQuoteKline& marketDataVariant);
 private:
     std::shared_ptr<MarketData> _marketData;
     std::shared_ptr<TOrdApi> _orderInterface;
     std::shared_ptr<model::Quote> _currentQuotePtr;
     model::Allocations _allocations;
-    std::vector<statistics::StatisticsInterface<TStatisticsMarketDataObject>> _statisticsChain; 
 };
 
 
-template<typename TOrdApi, typename TStatisticsMarketDataObject>
-Strategy<TOrdApi, TStatisticsMarketDataObject>::Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_) :
+template<typename TOrdApi>
+Strategy<TOrdApi>::Strategy(const std::shared_ptr<MarketData> marketData_, const std::shared_ptr<TOrdApi>& orderInterface_) :
 _marketData(marketData_)
 , _orderInterface(orderInterface_)
 , _currentQuotePtr(nullptr)
+, _statisticsChain()
 {}
 
-template<typename TOrdApi, typename TStatisticsMarketDataObject>
-void Strategy<TOrdApi, TStatisticsMarketDataObject>::evaluate() {
+template<typename TOrdApi>
+void Strategy<TOrdApi>::evaluate() {
     auto event = _marketData->read();
     if (event.get() == nullptr)
         return;
@@ -74,13 +81,21 @@ void Strategy<TOrdApi, TStatisticsMarketDataObject>::evaluate() {
     }
 }
 
-template<typename TOrdApi, typename TStatisticsMarketDataObject>
-bool Strategy<TOrdApi, TStatisticsMarketDataObject>::shouldEvaluate() {
+template <typename TOrdApi>
+template <typename TTradeQuoteKline>
+void Strategy<TOrdApi>::evaluateStatisticsChain(const TTradeQuoteKline& marketDataObject)
+{
+    std::variant<model::KLine, model::Quote, model::Trade> marketDataVariant(marketDataObject);
+    _statisticsChain.runChain(marketDataVariant);
+}
+
+template<typename TOrdApi>
+bool Strategy<TOrdApi>::shouldEvaluate() {
     return true;
 }
 
-template<typename TOrdApi, typename TStatisticsMarketDataObject>
-void Strategy<TOrdApi, TStatisticsMarketDataObject>::createAllocation(const model::Side& side_, const model::OrderAction& orderAction_) {
+template<typename TOrdApi>
+void Strategy<TOrdApi>::createAllocation(const model::Side& side_, const model::OrderAction& orderAction_) {
     auto currentQuote = *_currentQuotePtr.get();
     if (_currentQuotePtr == nullptr)
     {
