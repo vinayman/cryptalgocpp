@@ -3,7 +3,6 @@
 
 std::shared_ptr<TestMarketDataInterface> TestMarketDataInterface::getInstance(const std::shared_ptr<Config> &config)
 {
-    UniqueGuard lock_(MarketData::_mutex);
     if (_marketDataInstance.get() == nullptr)
     {
         static std::shared_ptr<TestMarketDataInterface> marketDataPtr(new TestMarketDataInterface());

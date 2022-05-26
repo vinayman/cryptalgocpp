@@ -11,6 +11,8 @@
 #include <chrono>
 #include <ctime>
 #include <mutex>
+#include <shared_mutex>
+#include <numeric>
 
 template <typename ...Args>
 void Log(const std::experimental::source_location& location,
@@ -35,7 +37,11 @@ void Log(const std::experimental::source_location& location,
 #define LOG_NVP(name_, var_) name_ << "=" << var_ << " "
 
 // types
+using Lock = std::shared_mutex;
+using SharedUniqueLock = std::unique_lock<Lock>;
+using SharedLock = std::shared_lock<Lock>;
 using Guard = std::lock_guard<std::mutex>;
+using ScopedGuard = std::scoped_lock<std::mutex>;
 using UniqueGuard = std::unique_lock<std::mutex>;
 
 // Signal Handling
@@ -58,3 +64,19 @@ struct VisitorFallback<> { template<typename T> void operator()(T&&) const {} };
 
 template <typename... Visitors> struct GenericVisitor: Visitors... { using Visitors::operator()...; };
 template <typename... Visitors> GenericVisitor(Visitors...) -> GenericVisitor<Visitors...>;
+
+// Double quantity handling
+inline bool almostEqual(const double& val1, const double& val2)
+{
+    return std::abs(val1 - val2) < 0.000001;
+}
+
+inline bool greaterThan(const double& val1, const double& val2)
+{
+    return !almostEqual(val1, val2) and val1 > val2;
+}
+
+inline auto mean(const auto& container, const size_t& container_size)
+{
+    return std::accumulate
+}

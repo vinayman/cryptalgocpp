@@ -17,7 +17,8 @@ enum class OrderAction {
 
 class Allocation {
 private:
-    double _size;
+    double _allocatedSize;
+    double _targetAllocationSize;
     double _price;
     model::Symbol _symbol;
     Side _side;
@@ -26,16 +27,18 @@ private:
 public:
     template <typename TSymbolStr>
     explicit Allocation(const TSymbolStr& symbolStr_, const double& price_, 
-                        const double& size_, const Side& side_, const OrderAction& orderAction_) :
+                        const double& targetAllocationSize_, const Side& side_, const OrderAction& orderAction_) :
             _symbol(symbolStr_)
             , _price(price_)
-            , _size(size_) 
+            , _targetAllocationSize(targetAllocationSize_)
+            , _allocatedSize(0.0)
             , _side(side_)
             , _orderAction(orderAction_) {}
     
     model::Symbol& getSymbol() { return _symbol ; };
     double& getPrice() { return _price; };
-    double& getSize() { return _size; };
+    double& getAllocatedSize() { return _allocatedSize; };
+    double& getTargetAllocationSize() { return _targetAllocationSize; };
     Side& getSide() { return _side; };
     OrderAction& getOrderAction() { return _orderAction; };
 };

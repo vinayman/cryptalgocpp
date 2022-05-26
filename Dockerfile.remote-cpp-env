@@ -37,14 +37,17 @@ RUN apt-get update \
       libssl-dev \
   && apt-get clean
 
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test \
+  && apt-get update \
+  && apt install -y gcc-11 g++-11 \
+  && apt-get clean
+
 RUN cd /usr/src/googletest && \
     cmake . && \
     cmake --build . --target install && \
     cp /usr/src/googletest/lib/* /usr/lib
 
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
-
-RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 
 RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 

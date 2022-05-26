@@ -4,13 +4,10 @@
 
 #include "MarketData.h"
 
-std::mutex MarketData::_mutex;
-
 std::shared_ptr<MarketData> MarketData::getInstance(const std::shared_ptr<Config> &config)
 {
-    UniqueGuard lock_(_mutex);
     if (_marketDataInstance.get() == nullptr)
-    {        
+    {
         static std::shared_ptr<MarketData> marketDataPtr(new MarketData());
         marketDataPtr->init(config);
         _marketDataInstance = marketDataPtr;
@@ -38,7 +35,6 @@ void MarketData::init(const std::shared_ptr<Config> &config)
 
 template<typename T>
 void MarketData::update(const std::shared_ptr<T>& data_) {
-    Guard lockGuard_(_mutex);
     _eventBuffer.push(std::make_shared<Event>(data_));
 }
 
@@ -72,10 +68,8 @@ int MarketData::handleTrades(Json::Value& json_result)
 }
 
 std::shared_ptr<Event> MarketData::read() {
-    Guard lockGuard_(_mutex);
-    auto event = _eventBuffer.empty() ? nullptr : _eventBuffer.top();
-    if (event) {
-        _eventBuffer.pop();
-    }
+    if (_eventBuffer.empty())
+        return nullptr;
+    auto event = _eventBuffer.pop();
     return event;
 }

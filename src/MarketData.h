@@ -4,14 +4,17 @@
 
 #pragma once
 #include <mutex>
+#include <shared_mutex>
 #include <queue>
 #include <iostream>
+#include <condition_variable>
 
 #include <boost/exception/exception.hpp>
 #include "binance_websocket.h"
 #include <plog/Log.h>
 
 #include "Utils.h"
+#include "MDQueue.h"
 #include "Config.h"
 #include "Event.h"
 #include "model/Symbol.h"
@@ -21,20 +24,12 @@
 
 using namespace binance;
 
-class QueueArrange {
-public:
-    bool operator()(const std::shared_ptr<Event> &this_, const std::shared_ptr<Event> &that_) {
-        return this_->timeStamp() < that_->timeStamp();
-    }
-};
-
 class MarketData {
 protected:
-    static std::mutex _mutex;
     std::shared_ptr<Config> _config = nullptr;
     model::Symbol _symbol;
     std::string _mdSubscriptionPeriod{};
-    std::priority_queue<std::shared_ptr<Event>, std::vector<std::shared_ptr<Event>>, QueueArrange> _eventBuffer;
+    PriorityQueue _eventBuffer;
     model::Symbol getSymbol() const { return _symbol ; };
     
     template<typename T>
@@ -47,7 +42,8 @@ protected:
 
     explicit MarketData() :
             _symbol(model::Symbol(std::string{"BNBUSDT"}))
-            , _mdSubscriptionPeriod("1m") {}
+            , _mdSubscriptionPeriod("1m")
+            , _eventBuffer(PriorityQueue()) {}
 
 public:
     inline static std::shared_ptr<MarketData> _marketDataInstance = nullptr;

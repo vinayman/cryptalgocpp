@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <variant>
+#include <mutex>
 
 #include <boost/exception/exception.hpp>
 
@@ -28,20 +29,23 @@ public:
     void evaluate();
     bool shouldEvaluate();
     void createAllocation(const model::Side& side_, const model::OrderAction& orderAction_);
-    virtual void onKline(const std::shared_ptr<Event>& event) = 0;
-    virtual void onQuote(const std::shared_ptr<Event>& event) = 0;
-    virtual void onTrade(const std::shared_ptr<Event>& event) = 0;
+    // Pass shared_ptr by value since its between threads
+    virtual void onKline(const std::shared_ptr<Event> event) = 0;
+    virtual void onQuote(const std::shared_ptr<Event> event) = 0;
+    virtual void onTrade(const std::shared_ptr<Event> event) = 0;
     void setQuote(const std::shared_ptr<model::Quote>& quotePtr_) {  _currentQuotePtr = quotePtr_ ; };
     model::Quote& getQuote() {return *_currentQuotePtr.get(); };
+    void handleAllocations();
+    void handleNewAllocation(std::shared_ptr<model::Allocation>& allocPtr);
     statistics::StatisticsChain _statisticsChain;
 
     template <typename TTradeQuoteKline>
-    void evaluateStatisticsChain(const TTradeQuoteKline& marketDataVariant);
+    void evaluateStatisticsChain(const TTradeQuoteKline marketDataVariant);
 private:
     std::shared_ptr<MarketData> _marketData;
     std::shared_ptr<TOrdApi> _orderInterface;
     std::shared_ptr<model::Quote> _currentQuotePtr;
-    model::Allocations _allocations;
+    std::shared_ptr<model::Allocations> _allocations;
 };
 
 
@@ -51,7 +55,13 @@ _marketData(marketData_)
 , _orderInterface(orderInterface_)
 , _currentQuotePtr(nullptr)
 , _statisticsChain()
+, _allocations(std::make_shared<model::Allocations>())
 {}
+
+template<typename TOrdApi>
+bool Strategy<TOrdApi>::shouldEvaluate() {
+    return true;
+}
 
 template<typename TOrdApi>
 void Strategy<TOrdApi>::evaluate() {
@@ -73,25 +83,40 @@ void Strategy<TOrdApi>::evaluate() {
             PLOG_DEBUG << "Unrecognized event";
             break;
     }
-    if (_allocations.hasChanged())
+    if (_allocations->hasChanged())
     {
         PLOG_DEBUG << "Allocations have changed";
-        // handleAllocations();
-        _allocations.setUnchanged();
+        handleAllocations();
+        _allocations->setUnchanged();
     }
 }
 
 template <typename TOrdApi>
 template <typename TTradeQuoteKline>
-void Strategy<TOrdApi>::evaluateStatisticsChain(const TTradeQuoteKline& marketDataObject)
+void Strategy<TOrdApi>::evaluateStatisticsChain(const TTradeQuoteKline marketDataObject)
 {
     std::variant<model::KLine, model::Quote, model::Trade> marketDataVariant(marketDataObject);
     _statisticsChain.runChain(marketDataVariant);
 }
 
-template<typename TOrdApi>
-bool Strategy<TOrdApi>::shouldEvaluate() {
-    return true;
+template <typename TOrdApi>
+void Strategy<TOrdApi>::handleAllocations()
+{
+    for (auto& alloc : _allocations->_allocations)
+    {
+        if (alloc == nullptr)
+            continue;
+        else if (almostEqual(alloc->getTargetAllocationSize(), alloc->getAllocatedSize()))
+            continue;
+        else if (almostEqual(alloc->getAllocatedSize(), 0.0) && greaterThan(alloc->getTargetAllocationSize(), 0.0))
+            handleNewAllocation(alloc);
+    }
+}
+
+template <typename TOrdApi>
+void Strategy<TOrdApi>::handleNewAllocation(std::shared_ptr<model::Allocation>& allocPtr)
+{
+
 }
 
 template<typename TOrdApi>
@@ -104,5 +129,5 @@ void Strategy<TOrdApi>::createAllocation(const model::Side& side_, const model::
     }
     auto price_ = (side_ == model::Side::Buy) ? currentQuote.getBidPrice() : currentQuote.getAskPrice();
     auto size_ = (side_ == model::Side::Buy) ? currentQuote.getBidQty() : currentQuote.getAskQty();
-    _allocations.addAllocation(std::make_shared<model::Allocation>(model::Allocation(currentQuote.getSymbol(), price_, size_, side_, orderAction_)));
+    _allocations->addAllocation(std::make_shared<model::Allocation>(model::Allocation(currentQuote.getSymbol(), price_, size_, side_, orderAction_)));
 }

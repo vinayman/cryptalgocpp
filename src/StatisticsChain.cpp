@@ -11,19 +11,10 @@ void statistics::StatisticsChain::runChain(const std::variant<model::KLine, mode
     {
         if (statistics != nullptr)
         {
-            std::visit(GenericVisitor{
-                [&](const model::KLine& kline)
-                {
-                    statistics->evaluateKline(kline);
-                },
-                [&](const model::Trade& trade)
-                {
-                    statistics->evaluateTrade(trade);
-                },
-                [&](const model::Quote& quote)
-                {
-                    statistics->evaluateQuote(quote);
-                }
+            std::visit(GenericVisitor {
+                [&](const model::KLine& kline) { statistics->evaluateKline(kline); },
+                [&](const model::Trade& trade) { statistics->evaluateTrade(trade); },
+                [&](const model::Quote& quote) { statistics->evaluateQuote(quote); },
             }, marketDataVariant);
         }
     }

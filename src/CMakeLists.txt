@@ -24,6 +24,7 @@ add_library(cryptalgo SHARED
         MarketDataInterface.cpp
         StatisticsInterface.h
         SmaStatistic.cpp
+        DampedMeanReversionStatistic.cpp
         StatisticsChain.cpp)
 
 target_link_libraries(cryptalgo
